@@ -14,13 +14,13 @@ import { doctors } from "@/data/doctors";
 import { blogPosts } from "@/data/home";
 import { site } from "@/data/site";
 import { specialties } from "@/data/specialties";
+import { describeBlock } from "@/lib/booking";
 import { findDoctor } from "@/lib/catalog";
 import { breadcrumbSchema, physicianSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 import { messageForDoctor } from "@/lib/whatsapp";
 
 const CMP_LOOKUP_URL = "https://www.cmp.org.pe/conoce-a-tu-medico/";
-const MODALITY_LABEL = { presencial: "Presencial", teleconsulta: "Teleconsulta", ambas: "Presencial y teleconsulta" } as const;
 
 export const dynamicParams = false;
 
@@ -116,11 +116,11 @@ export default async function DoctorPage({ params }: PageProps<"/staff/[slug]">)
                   <CalendarClock aria-hidden strokeWidth={1.75} className="size-5 text-primary" /> Horarios
                 </h2>
                 <ul className="mt-3 space-y-2 text-[0.95rem] text-fg">
-                  {doctor.schedule.map((slot) => (
-                    <li key={`${slot.day}-${slot.hours}`}>
-                      <span className="font-semibold text-heading">{slot.day}</span>
+                  {doctor.schedule.map(describeBlock).map((block) => (
+                    <li key={block.key}>
+                      <span className="font-semibold text-heading">{block.days}</span>
                       <br />
-                      {slot.hours} · {MODALITY_LABEL[slot.modality]}
+                      {block.hours} · {block.modalities}
                     </li>
                   ))}
                 </ul>
@@ -186,7 +186,7 @@ export default async function DoctorPage({ params }: PageProps<"/staff/[slug]">)
 
       <CtaBand
         title={`Agenda con ${doctor.name}`}
-        text="Elige presencial o teleconsulta y el horario que te acomode."
+        text="Elige videollamada o llamada y el turno que te acomode, de lunes a viernes desde las 7:00 p.m."
         message={messageForDoctor(doctor.name)}
       />
     </>

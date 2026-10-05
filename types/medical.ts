@@ -1,17 +1,37 @@
-export type Modality = "presencial" | "teleconsulta";
+/** Teleconsulta por videollamada o por llamada telefónica. */
+export type Modality = "videollamada" | "llamada";
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface OpeningHours {
-  /** Días abiertos (0 = domingo … 6 = sábado). */
+  /** Días de atención (0 = domingo … 6 = sábado). */
   days: readonly Weekday[];
-  /** Hora de apertura, en minutos desde medianoche. */
+  /** Inicio de la atención, en minutos desde medianoche. */
   opensAt: number;
-  /** Hora de cierre, en minutos desde medianoche. */
+  /** Fin de la atención, en minutos desde medianoche (el último turno termina a esta hora). */
   closesAt: number;
+  /** Duración de cada turno de teleconsulta, en minutos. */
+  slotMinutes: number;
+  /** Anticipación mínima para reservar un turno de hoy, en minutos. */
+  minLeadMinutes: number;
   timeZone: string;
+  /** "Lunes a viernes · 7:00 p.m. – 10:00 p.m." */
   label: string;
+  /** "Lun–Vie desde 7:00 p.m." (badges y espacios reducidos) */
+  shortLabel: string;
   closedLabel: string;
+}
+
+/** Franja horaria en minutos desde medianoche: [from, to). */
+export interface TimeWindow {
+  from: number;
+  to: number;
+}
+
+/** Turno concreto: fecha ISO (AAAA-MM-DD, hora de Lima) y minuto de inicio. */
+export interface Slot {
+  date: string;
+  minutes: number;
 }
 
 export interface SocialLink {
@@ -34,6 +54,11 @@ export interface SiteConfig {
   slogan: string;
   domain: string;
   url: string;
+  /** País donde se atiende por teleconsulta. */
+  serviceArea: string;
+  /** Mensajes ancla de la plataforma 100 % online. */
+  anchors: { online: string; prescription: string };
+  /** @deprecated Sede física: se elimina al reencuadrar secciones (fase D). */
   address: {
     street: string;
     district: string;
@@ -108,10 +133,10 @@ export interface Treatment {
   provisional: boolean;
 }
 
-export interface DoctorSchedule {
-  day: string;
-  hours: string;
-  modality: Modality | "ambas";
+/** Bloque de atención de un doctor: días hábiles, franja (desde las 7 p.m.) y modalidades. */
+export interface DoctorSchedule extends TimeWindow {
+  days: readonly Weekday[];
+  modalities: readonly Modality[];
 }
 
 export interface Doctor {
@@ -126,6 +151,8 @@ export interface Doctor {
   focus: readonly string[];
   photo: string;
   photoAlt: string;
+  /** Molestias que atiende (filtra las tarjetas del agendador). */
+  complaints: readonly ComplaintId[];
   schedule: readonly DoctorSchedule[];
   provisional: boolean;
 }
@@ -196,6 +223,7 @@ export interface Insurer {
 
 export type AppointmentFor = "mi" | "familiar";
 
+/** @deprecated Formulario de una sola pantalla; lo reemplaza BookingDraft (asistente de 3 pasos, fase C). */
 export interface Appointment {
   modality: Modality;
   forWhom: AppointmentFor;
@@ -206,6 +234,61 @@ export interface Appointment {
   reason: string;
   preferredDate?: string;
 }
+
+/** Molestia principal que elige el paciente en el paso 1 del agendador. */
+export type ComplaintId = "articulaciones" | "espalda" | "rodilla" | "huesos" | "generalizado" | "general";
+
+export interface Complaint {
+  id: ComplaintId;
+  label: string;
+  hint: string;
+  /** Zonas del mapa corporal que precargan esta molestia. */
+  zones: readonly BodyZoneId[];
+  /** Condiciones del triage que precargan esta molestia. */
+  specialties: readonly SpecialtySlug[];
+}
+
+/** Señales de alarma: no son para teleconsulta (emergencias / SAMU 106). */
+export type RedFlagId = "fractura" | "pecho" | "aire" | "fiebre" | "debilidad";
+
+export interface RedFlag {
+  id: RedFlagId;
+  label: string;
+}
+
+export type SinceId = "dias" | "semanas" | "meses" | "anos";
+
+/** Estado del asistente de 3 pasos (lo que el paciente va completando). */
+export interface BookingDraft {
+  /** Texto del campo de edad; se valida con parseAge. */
+  age: string;
+  forWhom: AppointmentFor;
+  complaint: ComplaintId | null;
+  /** Intensidad del dolor de 1 a 10 (opcional). */
+  intensity: number | null;
+  since: SinceId | null;
+  redFlags: readonly RedFlagId[];
+  /** "Entiendo que no es una emergencia y quiero agendar igual". */
+  acknowledgedNotEmergency: boolean;
+  modality: Modality;
+  doctorSlug: string | null;
+  slot: Slot | null;
+  fullName: string;
+  phone: string;
+  consent: boolean;
+}
+
+export type BookingStep = 1 | 2 | 3;
+export type BookingField =
+  | "age"
+  | "complaint"
+  | "acknowledge"
+  | "doctor"
+  | "slot"
+  | "fullName"
+  | "phone"
+  | "consent";
+export type BookingErrors = Partial<Record<BookingField, string>>;
 
 export type IconName =
   | "scan"

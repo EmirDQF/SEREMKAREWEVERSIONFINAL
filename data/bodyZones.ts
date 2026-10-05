@@ -1,4 +1,4 @@
-import type { BodyZone, BodyZoneId } from "@/types/medical";
+import type { BodyZone, BodyZoneId, Complaint, ComplaintId, SpecialtySlug } from "@/types/medical";
 
 export const bodyZones: readonly BodyZone[] = [
   {
@@ -65,6 +65,36 @@ export const bodyZones: readonly BodyZone[] = [
     doctorSlug: "carmen-ugarte",
   },
 ];
+
+/** Molestias del paso 1 del agendador. Se precargan desde el mapa corporal o el triage. */
+export const complaints: readonly Complaint[] = [
+  {
+    id: "articulaciones",
+    label: "Articulaciones",
+    hint: "Manos, hombros, cadera, pies…",
+    zones: ["manos", "hombros", "cadera", "pies"],
+    specialties: ["artrosis", "artritis-reumatoide", "gota", "lupus"],
+  },
+  { id: "espalda", label: "Espalda o columna", hint: "Cuello, zona lumbar…", zones: ["cuello", "espalda"], specialties: ["espondiloartritis"] },
+  { id: "rodilla", label: "Rodilla", hint: "Al caminar, subir escaleras o tras hacer deporte", zones: ["rodillas"], specialties: [] },
+  { id: "huesos", label: "Huesos / osteoporosis", hint: "Densitometría, fracturas por fragilidad", zones: [], specialties: ["osteoporosis"] },
+  { id: "generalizado", label: "Dolor generalizado o rigidez", hint: "Dolor en todo el cuerpo, cansancio", zones: [], specialties: ["fibromialgia"] },
+  { id: "general", label: "Consulta general o control", hint: "Resultados, segunda opinión, seguimiento", zones: [], specialties: [] },
+];
+
+export function getComplaint(id: ComplaintId): Complaint {
+  const complaint = complaints.find((c) => c.id === id);
+  if (!complaint) throw new Error(`Complaint not found: ${id}`);
+  return complaint;
+}
+
+/** Molestia que corresponde a una zona del mapa corporal o a una condición del triage. */
+export function complaintFor(target: { kind: "zone"; zone: BodyZoneId } | { kind: "condition"; slug: SpecialtySlug }): ComplaintId {
+  const match = complaints.find((c) =>
+    target.kind === "zone" ? c.zones.includes(target.zone) : c.specialties.includes(target.slug),
+  );
+  return match?.id ?? "general";
+}
 
 export function getBodyZone(id: BodyZoneId): BodyZone {
   const zone = bodyZones.find((z) => z.id === id);

@@ -1,12 +1,8 @@
 import { site } from "@/data/site";
+import { MODALITY_LABEL } from "@/data/teleconsult";
 import { todayISO } from "@/lib/schedule";
+import { formatDayISO } from "@/lib/slots";
 import type { Appointment } from "@/types/medical";
-
-const WEEKDAYS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"] as const;
-const MONTHS = [
-  "enero", "febrero", "marzo", "abril", "mayo", "junio",
-  "julio", "agosto", "setiembre", "octubre", "noviembre", "diciembre",
-] as const;
 
 export const FIELD_LIMITS = {
   nameMax: 80,
@@ -27,15 +23,15 @@ export function clinicWhatsApp(message: string = site.whatsapp.defaultMessage): 
   return buildWhatsAppLink(site.whatsapp.number, message);
 }
 
-/** "Hola SERMEKARE, quisiera agendar una consulta por gota." */
+/** "Hola SERMEKARE, quiero agendar una teleconsulta por gota." */
 export function messageAbout(topic: string, doctorName?: string): string {
   const withDoctor = doctorName ? ` con ${doctorName}` : "";
-  return `Hola ${site.name}, quisiera agendar una consulta${withDoctor} por ${topic.toLowerCase()}.`;
+  return `Hola ${site.name}, quiero agendar una teleconsulta${withDoctor} por ${topic.toLowerCase()}.`;
 }
 
-/** "Hola SERMEKARE, quisiera agendar una consulta con Dra. Valeria Quintana." */
+/** "Hola SERMEKARE, quiero agendar una teleconsulta con Dra. Valeria Quintana." */
 export function messageForDoctor(doctorName: string): string {
-  return `Hola ${site.name}, quisiera agendar una consulta con ${doctorName}.`;
+  return `Hola ${site.name}, quiero agendar una teleconsulta con ${doctorName}.`;
 }
 
 export function buildMailtoLink(email: string, subject: string, body: string): string {
@@ -44,16 +40,14 @@ export function buildMailtoLink(email: string, subject: string, body: string): s
 
 /** "2026-10-12" → "lunes 12 de octubre" (sin depender de la zona horaria del navegador). */
 export function formatPreferredDate(iso: string): string {
-  const [year, month, day] = iso.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day));
-  return `${WEEKDAYS[date.getUTCDay()]} ${day} de ${MONTHS[month - 1]}`;
+  return formatDayISO(iso);
 }
 
 export function buildAppointmentMessage(a: Appointment): string {
   const lines = [
     site.whatsapp.defaultMessage,
     "",
-    `• Modalidad: ${a.modality === "presencial" ? `Presencial (sede ${site.address.district})` : "Teleconsulta"}`,
+    `• Modalidad: ${MODALITY_LABEL[a.modality]}`,
     `• Para: ${a.forWhom === "mi" ? "Mí" : "Un familiar"}`,
     `• Especialidad: ${a.specialty.trim()}`,
     a.doctorName ? `• Médico: ${a.doctorName}` : null,

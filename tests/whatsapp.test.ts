@@ -10,7 +10,7 @@ import {
 import type { Appointment } from "@/types/medical";
 
 const base: Appointment = {
-  modality: "presencial",
+  modality: "videollamada",
   forWhom: "familiar",
   specialty: "Artrosis",
   fullName: "  María Pérez ",
@@ -29,8 +29,8 @@ describe("buildWhatsAppLink", () => {
 describe("buildAppointmentMessage", () => {
   it("includes every field in a structured, trimmed message", () => {
     const msg = buildAppointmentMessage({ ...base, doctorName: "Dra. Lucía Andrade" });
-    expect(msg).toContain("Hola SERMEKARE, quisiera agendar una consulta.");
-    expect(msg).toContain("• Modalidad: Presencial (sede San Borja)");
+    expect(msg).toContain("Hola SERMEKARE, quiero agendar una teleconsulta.");
+    expect(msg).toContain("• Modalidad: Videollamada");
     expect(msg).toContain("• Para: Un familiar");
     expect(msg).toContain("• Especialidad: Artrosis");
     expect(msg).toContain("• Médico: Dra. Lucía Andrade");
@@ -41,10 +41,10 @@ describe("buildAppointmentMessage", () => {
   });
 
   it("omits optional fields when missing", () => {
-    const msg = buildAppointmentMessage({ ...base, preferredDate: undefined, modality: "teleconsulta", forWhom: "mi" });
+    const msg = buildAppointmentMessage({ ...base, preferredDate: undefined, modality: "llamada", forWhom: "mi" });
     expect(msg).not.toContain("Médico");
     expect(msg).not.toContain("Fecha preferida");
-    expect(msg).toContain("• Modalidad: Teleconsulta");
+    expect(msg).toContain("• Modalidad: Llamada");
     expect(msg).toContain("• Para: Mí");
   });
 });
@@ -67,9 +67,9 @@ describe("validateAppointment", () => {
 
 describe("messageAbout", () => {
   it("adapts the base message to a topic and optional doctor", () => {
-    expect(messageAbout("Gota")).toBe("Hola SERMEKARE, quisiera agendar una consulta por gota.");
+    expect(messageAbout("Gota")).toBe("Hola SERMEKARE, quiero agendar una teleconsulta por gota.");
     expect(messageAbout("Rodillas", "Dra. Ana")).toBe(
-      "Hola SERMEKARE, quisiera agendar una consulta con Dra. Ana por rodillas.",
+      "Hola SERMEKARE, quiero agendar una teleconsulta con Dra. Ana por rodillas.",
     );
   });
 });
@@ -77,7 +77,7 @@ describe("messageAbout", () => {
 describe("messageForDoctor", () => {
   it("asks for an appointment with a specific doctor", () => {
     expect(messageForDoctor("Dr. Luis Prado")).toBe(
-      "Hola SERMEKARE, quisiera agendar una consulta con Dr. Luis Prado.",
+      "Hola SERMEKARE, quiero agendar una teleconsulta con Dr. Luis Prado.",
     );
   });
 });

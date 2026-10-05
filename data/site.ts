@@ -4,10 +4,15 @@ const MINUTES_PER_HOUR = 60;
 
 export const site: SiteConfig = {
   name: "SERMEKARE",
-  legalTagline: "Centro Especializado en Reumatología y Salud Articular",
+  legalTagline: "Reumatología y salud articular por teleconsulta",
   slogan: "Mejorar la vida de nuestros pacientes",
   domain: "sermekare.com", // PROVISIONAL
   url: "https://sermekare.com", // PROVISIONAL
+  serviceArea: "Perú",
+  anchors: {
+    online: "Atención 100 % online por videollamada o llamada",
+    prescription: "Recibe tus indicaciones y tu receta electrónica sin salir de casa",
+  },
   address: {
     street: "Av. Aviación 2450", // PROVISIONAL
     district: "San Borja", // PROVISIONAL
@@ -25,16 +30,19 @@ export const site: SiteConfig = {
   whatsapp: {
     display: "+51 999 000 000", // PROVISIONAL
     number: "51999000000", // PROVISIONAL
-    defaultMessage: "Hola SERMEKARE, quisiera agendar una consulta.",
+    defaultMessage: "Hola SERMEKARE, quiero agendar una teleconsulta.",
   },
   email: "contacto@sermekare.com", // PROVISIONAL
   hours: {
-    days: [1, 2, 3, 4, 5, 6],
-    opensAt: 8 * MINUTES_PER_HOUR,
-    closesAt: 20 * MINUTES_PER_HOUR,
+    days: [1, 2, 3, 4, 5], // PROVISIONAL: lunes a viernes
+    opensAt: 19 * MINUTES_PER_HOUR, // PROVISIONAL: 7:00 p.m.
+    closesAt: 22 * MINUTES_PER_HOUR, // PROVISIONAL: 10:00 p.m.
+    slotMinutes: 30, // PROVISIONAL: duración de cada turno
+    minLeadMinutes: 30, // PROVISIONAL: anticipación mínima para reservar un turno de hoy
     timeZone: "America/Lima",
-    label: "Lunes a sábado · 8:00 a.m. – 8:00 p.m.",
-    closedLabel: "Domingo cerrado",
+    label: "Lunes a viernes · 7:00 p.m. – 10:00 p.m.",
+    shortLabel: "Lun–Vie desde 7:00 p.m.",
+    closedLabel: "Sábados y domingos sin atención: agenda para el lunes",
   },
   socials: [
     { network: "instagram", label: "Instagram", href: "https://instagram.com/sermekare" }, // PROVISIONAL
@@ -54,4 +62,4 @@ export const site: SiteConfig = {
 };
 
 export const MEDICAL_DISCLAIMER =
-  "La información de esta web es orientativa y no reemplaza una consulta médica. Ante una emergencia, acude al servicio de emergencias más cercano.";
+  "La información de esta web es orientativa y no reemplaza una consulta médica. La teleconsulta no es para emergencias: acude a emergencias o llama al SAMU 106.";

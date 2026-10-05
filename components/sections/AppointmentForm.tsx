@@ -2,7 +2,7 @@
 
 import { useId, useRef, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
-import { Clock, Mail, MapPin, ShieldCheck, User, Users, Video } from "lucide-react";
+import { Clock, Mail, MapPin, Phone, ShieldCheck, User, Users, Video } from "lucide-react";
 import type { Appointment, AppointmentFor, Modality } from "@/types/medical";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { SuccessBurst } from "@/components/shared/SuccessBurst";
@@ -77,7 +77,7 @@ export function AppointmentForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const minDate = useSyncExternalStore(noopSubscribe, () => todayISO(site.hours.timeZone), () => undefined);
 
-  const [modality, setModality] = useState<Modality>("presencial");
+  const [modality, setModality] = useState<Modality>("videollamada");
   const [forWhom, setForWhom] = useState<AppointmentFor>("mi");
   const [specialty, setSpecialty] = useState("");
   const [fullName, setFullName] = useState("");
@@ -204,21 +204,21 @@ export function AppointmentForm() {
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   <Choice
                     name="modality"
-                    value="presencial"
-                    current={modality}
-                    onChange={setModality}
-                    icon={<MapPin aria-hidden strokeWidth={1.75} />}
-                    title="Presencial"
-                    hint={`Sede ${site.address.district}`}
-                  />
-                  <Choice
-                    name="modality"
-                    value="teleconsulta"
+                    value="videollamada"
                     current={modality}
                     onChange={setModality}
                     icon={<Video aria-hidden strokeWidth={1.75} />}
-                    title="Teleconsulta"
+                    title="Videollamada"
                     hint="Desde tu casa u oficina"
+                  />
+                  <Choice
+                    name="modality"
+                    value="llamada"
+                    current={modality}
+                    onChange={setModality}
+                    icon={<Phone aria-hidden strokeWidth={1.75} />}
+                    title="Llamada"
+                    hint="Solo voz, si tu internet es lento"
                   />
                 </div>
               </fieldset>

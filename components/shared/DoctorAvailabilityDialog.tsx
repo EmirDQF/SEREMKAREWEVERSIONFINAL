@@ -1,20 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarClock, MapPin, Video } from "lucide-react";
-import type { Doctor, DoctorSchedule } from "@/types/medical";
+import { CalendarClock, Phone, Video } from "lucide-react";
+import type { Doctor } from "@/types/medical";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { buttonVariants } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
+import { describeBlock } from "@/lib/booking";
 import { clinicWhatsApp, messageForDoctor } from "@/lib/whatsapp";
 import { site } from "@/data/site";
 import { cn } from "@/lib/utils";
-
-const MODALITY_LABEL: Record<DoctorSchedule["modality"], string> = {
-  presencial: "Presencial",
-  teleconsulta: "Teleconsulta",
-  ambas: "Presencial y teleconsulta",
-};
 
 interface DoctorAvailabilityDialogProps {
   doctor: Doctor;
@@ -41,24 +36,27 @@ export function DoctorAvailabilityDialog({ doctor, triggerClassName }: DoctorAva
         </DialogDescription>
 
         <ul className="mt-6 space-y-3">
-          {doctor.schedule.map((slot) => (
-            <li key={`${slot.day}-${slot.hours}`} className="rounded-2xl border border-line bg-bg p-4">
-              <p className="font-display font-semibold text-heading">{slot.day}</p>
-              <p className="text-muted">{slot.hours}</p>
-              <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-teal-tint px-3 py-1 text-sm font-medium text-primary">
-                {slot.modality === "teleconsulta" ? (
-                  <Video aria-hidden strokeWidth={1.75} className="size-4" />
-                ) : (
-                  <MapPin aria-hidden strokeWidth={1.75} className="size-4" />
-                )}
-                {MODALITY_LABEL[slot.modality]}
-              </p>
-            </li>
-          ))}
+          {doctor.schedule.map((block) => {
+            const text = describeBlock(block);
+            return (
+              <li key={text.key} className="rounded-2xl border border-line bg-bg p-4">
+                <p className="font-display font-semibold text-heading">{text.days}</p>
+                <p className="text-muted">{text.hours}</p>
+                <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-teal-tint px-3 py-1 text-sm font-medium text-primary">
+                  {block.modalities.includes("videollamada") ? (
+                    <Video aria-hidden strokeWidth={1.75} className="size-4" />
+                  ) : (
+                    <Phone aria-hidden strokeWidth={1.75} className="size-4" />
+                  )}
+                  {text.modalities}
+                </p>
+              </li>
+            );
+          })}
         </ul>
 
         <p className="mt-5 text-[0.95rem] text-muted">
-          Te confirmamos el horario exacto por WhatsApp. Atendemos {site.hours.label.toLowerCase()}.
+          Teleconsulta de {site.hours.label.toLowerCase()} (hora de Lima). Te confirmamos el turno por WhatsApp.
         </p>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">

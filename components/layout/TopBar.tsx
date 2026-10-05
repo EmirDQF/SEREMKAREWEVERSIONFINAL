@@ -42,8 +42,8 @@ export function TopBar() {
                   />
                 </span>
                 <span className="truncate">
-                  <strong className="font-semibold text-white">{status.isOpen ? "Abierto ahora" : "Cerrado"}</strong>
-                  <span className="hidden sm:inline"> · {status.nextChange}</span>
+                  <strong className="font-semibold text-white">{status.headline}</strong>
+                  <span className="hidden sm:inline"> · {status.detail}</span>
                 </span>
               </>
             ) : (
