@@ -11,7 +11,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       // Lógica pura de la teleconsulta (agendador, turnos, estado en vivo, mensajes y JSON-LD).
-      include: ["lib/booking.ts", "lib/slots.ts", "lib/schedule.ts", "lib/whatsapp.ts", "lib/schema.ts"],
+      include: ["lib/booking.ts", "lib/slots.ts", "lib/schedule.ts", "lib/whatsapp.ts", "lib/schema.ts", "lib/contrast.ts"],
       reporter: ["text"],
       thresholds: { lines: 80, functions: 80, branches: 80, statements: 80 },
     },

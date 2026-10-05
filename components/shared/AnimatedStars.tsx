@@ -35,7 +35,7 @@ export function AnimatedStars({ rating, className }: AnimatedStarsProps) {
           <Star
             aria-hidden
             strokeWidth={1.5}
-            className={cn("size-4", index < filled ? "fill-amber-400 text-amber-500" : "text-line-strong")}
+            className={cn("size-4", index < filled ? "fill-rating text-rating" : "text-line-strong")}
           />
         </motion.span>
       ))}

@@ -32,15 +32,7 @@ export function TopBar() {
           <span className="inline-flex min-w-0 items-center gap-2" aria-live="polite">
             {status ? (
               <>
-                <span className="relative flex size-2.5 shrink-0">
-                  {status.isOpen ? (
-                    <span aria-hidden className="absolute inset-0 animate-pulse-ring rounded-full bg-emerald-400" />
-                  ) : null}
-                  <span
-                    aria-hidden
-                    className={cn("relative size-2.5 rounded-full", status.isOpen ? "bg-emerald-400" : "bg-slate-400")}
-                  />
-                </span>
+                <span aria-hidden className={status.isOpen ? "online-dot" : "offline-dot"} />
                 <span className="truncate">
                   <strong className="font-semibold text-white">{status.headline}</strong>
                   <span className="hidden sm:inline"> · {status.detail}</span>

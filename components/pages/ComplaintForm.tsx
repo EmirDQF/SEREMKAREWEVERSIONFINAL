@@ -68,7 +68,7 @@ function Field({ id, label, error, hint, children }: FieldProps) {
       {hint ? <p className="mt-0.5 text-sm text-muted">{hint}</p> : null}
       <div className="mt-2">{children}</div>
       {error ? (
-        <p id={`${id}-error`} className="mt-1.5 text-sm font-medium text-[#b42318] dark:text-coral">
+        <p id={`${id}-error`} className="mt-1.5 text-sm font-medium text-alert">
           {error}
         </p>
       ) : null}
@@ -292,7 +292,7 @@ export function ComplaintForm() {
           </span>
         </label>
         {errors.consent ? (
-          <p id={`${fieldId("consent")}-error`} className="mt-1.5 text-sm font-medium text-[#b42318] dark:text-coral">
+          <p id={`${fieldId("consent")}-error`} className="mt-1.5 text-sm font-medium text-alert">
             {errors.consent}
           </p>
         ) : null}

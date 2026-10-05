@@ -23,7 +23,7 @@ export function MobileActionBar() {
         href={clinicWhatsApp()}
         target="_blank"
         rel="noopener noreferrer"
-        className={`${ACTION} bg-[#0f7a6c] text-white dark:bg-[#25d366] dark:text-navy`}
+        className={`${ACTION} bg-whatsapp-strong text-on-whatsapp`}
       >
         <WhatsAppIcon />
         WhatsApp

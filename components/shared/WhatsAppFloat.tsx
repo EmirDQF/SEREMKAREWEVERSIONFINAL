@@ -50,17 +50,18 @@ export function WhatsAppFloat() {
         <span className="block font-display font-semibold text-heading">¿Tienes dudas? Escríbenos</span>
         <span className="block text-sm text-muted">Te ayudamos a elegir especialista</span>
       </span>
-      <span className="relative grid size-16 place-items-center rounded-full bg-[#0f7a6c] text-white shadow-lift transition-transform duration-200 group-hover:scale-105 group-active:scale-95 dark:bg-[#25d366] dark:text-navy">
+      <span className="relative grid size-16 place-items-center rounded-full bg-whatsapp text-on-whatsapp-brand shadow-lift transition-transform duration-200 group-hover:scale-105 group-active:scale-95">
         <WhatsAppIcon className="size-8" />
         <span
           aria-hidden
           className={cn(
-            "absolute -top-2 right-1/2 translate-x-1/2 whitespace-nowrap rounded-full px-2 py-0.5 text-[0.7rem] font-bold shadow-soft",
-            isOpen ? "bg-white text-[#0f7a6c]" : "bg-navy text-white dark:bg-white dark:text-navy",
+            "absolute -top-2 right-1/2 inline-flex translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[0.7rem] font-bold shadow-soft",
+            isOpen ? "border border-online-border bg-card-solid text-online" : "bg-navy text-on-navy dark:bg-on-navy dark:text-navy",
             status === null && "invisible",
           )}
         >
-          {isOpen ? "● En línea" : "Déjanos tu mensaje"}
+          {isOpen ? <span className="online-dot" /> : null}
+          {isOpen ? "En línea" : "Déjanos tu mensaje"}
         </span>
       </span>
     </a>

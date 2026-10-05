@@ -65,7 +65,7 @@ function Choice<T extends string>({ name, value, current, onChange, icon, title,
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-1.5 text-sm font-medium text-[#b42318] dark:text-coral">
+    <p id={id} className="mt-1.5 text-sm font-medium text-alert">
       {message}
     </p>
   );

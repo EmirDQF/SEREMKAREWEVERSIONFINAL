@@ -1,16 +1,24 @@
 import type { Theme } from "@/lib/theme";
 
-/** Colores de marca para WebGL (los mismos de globals.css; three no lee variables CSS). */
+/**
+ * Colores de marca para WebGL: espejo de los tokens de app/globals.css ("Teal clínico × Azul digital").
+ * three no lee variables CSS; si cambias un token, cámbialo también aquí.
+ */
 export const PALETTE = {
-  teal: "#00a896",
-  tealLight: "#2dd4bf",
-  coral: "#f97362",
-  coralLight: "#fb8a7b",
-  sky: "#0284c7",
-  skyLight: "#7dd3fc",
+  teal: "#00a896", // --teal (claro)
+  tealLight: "#2dd4bf", // --teal (oscuro)
+  coral: "#f97362", // --coral (claro)
+  coralLight: "#fb8a7b", // --coral (oscuro)
+  sky: "#0284c7", // --ring (claro)
+  skyLight: "#7dd3fc", // --video (oscuro) / --video-glow
+  video: "#0369a1", // --video (claro)
+  videoStrong: "#38bdf8", // --video-strong (oscuro)
+  pain: "#f59e0b", // --pain (claro)
+  painLight: "#fbbf24", // --pain (oscuro)
+  online: "#10b981", // --online-dot (claro)
   cyan: "#67e8f9",
-  navy: "#0b192c",
-  navy2: "#1e3e62",
+  navy: "#0b192c", // --navy
+  navy2: "#1e3e62", // --navy-2
 } as const;
 
 export interface ThemeColors {

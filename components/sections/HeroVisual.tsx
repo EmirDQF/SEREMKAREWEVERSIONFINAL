@@ -54,7 +54,7 @@ export function HeroVisual() {
 
   return (
     <div ref={ref} className="relative mx-auto aspect-[4/4.6] w-full max-w-[34rem]">
-      <div aria-hidden className="absolute inset-[6%] rounded-[46%_54%_52%_48%/50%_44%_56%_50%] bg-gradient-to-br from-teal/25 via-sky-400/10 to-navy-2/20" />
+      <div aria-hidden className="absolute inset-[6%] rounded-[46%_54%_52%_48%/50%_44%_56%_50%] bg-gradient-to-br from-teal/25 via-video-strong/10 to-navy-2/20" />
       <div className="absolute inset-[9%] overflow-hidden rounded-[44%_56%_50%_50%/52%_46%_54%_48%] shadow-lift">
         <Image
           src={homeImages.hero}
@@ -94,7 +94,7 @@ export function HeroVisual() {
       </FloatingCard>
 
       <FloatingCard y={yFast} delay={0.65} className="right-0 top-[4%] sm:-right-4">
-        <Star aria-hidden className="size-6 fill-amber-400 text-amber-500" />
+        <Star aria-hidden className="size-6 fill-rating text-rating" />
         <span>
           <span className="block font-display text-lg font-extrabold leading-tight text-heading">
             {formatStat(site.stats.rating, site.stats.rating.value)}

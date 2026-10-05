@@ -12,7 +12,7 @@
   --foreground: #0b192c;
   --heading: #0b192c;
   --muted: #334155;
-  --subtle: #64748b;
+  --subtle: #5f6f86; /* AA 4.5:1 también sobre --background-alt (#64748b daba 4.34:1) */
   --card: rgb(255 255 255 / 0.8);
   --card-solid: #ffffff;
   --border: rgb(203 213 225 / 0.6);
@@ -27,6 +27,42 @@
   --coral: #f97362;
   --coral-tint: rgb(249 115 98 / 0.12);
   --ring: #0284c7;
+  /* Azul de teleconsulta: lo digital, la videollamada y la confianza profesional */
+  --video: #0369a1;
+  --video-strong: #075985;
+  --video-tint: rgb(2 132 199 / 0.1);
+  --on-video: #ffffff;
+  --video-glow: #7dd3fc;
+  /* Ámbar: solo zonas de dolor seleccionadas (relleno o punto; nunca como texto salvo --pain-text) */
+  --pain: #f59e0b;
+  --pain-text: #b45309;
+  --pain-tint: rgb(245 158 11 / 0.14);
+  /* Rojo: solo urgencias y errores */
+  --alert: #dc2626;
+  --alert-tint: rgb(220 38 38 / 0.08);
+  /* Texto dentro del aviso rojo (#dc2626 sobre su tinte daba 4.28:1) */
+  --alert-strong: #b91c1c;
+  /* Esmeralda: solo el estado "en línea" */
+  --online: #047857;
+  --online-dot: #10b981;
+  --online-tint: rgb(16 185 129 / 0.1);
+  --online-border: rgb(16 185 129 / 0.25);
+  --online-glow: rgb(16 185 129 / 0.35);
+  /* WhatsApp: verde de marca solo en el ícono y el botón flotante; texto sobre --whatsapp-strong */
+  --whatsapp: #25d366;
+  --on-whatsapp-brand: #0b192c;
+  --whatsapp-strong: #0f7a6c;
+  --whatsapp-strong-hover: #0b6358;
+  --on-whatsapp: #ffffff;
+  /* Estrellas de reseñas (excepción documentada al ámbar: convención universal) */
+  --rating: #d97706;
+  /* Superficies navy (iguales en ambos temas) */
+  --navy: #0b192c;
+  --navy-2: #1e3e62;
+  --navy-3: #13243b;
+  --on-navy: #ffffff;
+  --on-navy-muted: #e2e8f0;
+  --on-navy-subtle: #94a3b8;
   --joint-bone: #e2e8f0;
   --joint-bone-stroke: #94a3b8;
   --shadow-color: 215 40% 20%;
@@ -55,6 +91,25 @@
   --coral: #fb8a7b;
   --coral-tint: rgb(251 138 123 / 0.14);
   --ring: #7dd3fc;
+  --video: #7dd3fc;
+  --video-strong: #38bdf8;
+  --video-tint: rgb(56 189 248 / 0.14);
+  --on-video: #0b192c;
+  --pain: #fbbf24;
+  --pain-text: #fcd34d;
+  --pain-tint: rgb(251 191 36 / 0.16);
+  --alert: #f87171;
+  --alert-tint: rgb(248 113 113 / 0.12);
+  --alert-strong: #fca5a5;
+  --online: #34d399;
+  --online-dot: #34d399;
+  --online-tint: rgb(52 211 153 / 0.12);
+  --online-border: rgb(52 211 153 / 0.3);
+  --online-glow: rgb(52 211 153 / 0.4);
+  --whatsapp-strong: #25d366;
+  --whatsapp-strong-hover: #4ade80;
+  --on-whatsapp: #0b192c;
+  --rating: #fbbf24;
   --joint-bone: #1e3e62;
   --joint-bone-stroke: #5b7aa0;
   --shadow-color: 220 60% 3%;
@@ -83,10 +138,34 @@
   --color-link: var(--link);
   --color-coral: var(--coral);
   --color-coral-tint: var(--coral-tint);
-  --color-navy: #0b192c;
-  --color-navy-2: #1e3e62;
-  --color-navy-3: #13243b;
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-navy-3: var(--navy-3);
+  --color-on-navy: var(--on-navy);
+  --color-on-navy-muted: var(--on-navy-muted);
+  --color-on-navy-subtle: var(--on-navy-subtle);
   --color-ring: var(--ring);
+  --color-video: var(--video);
+  --color-video-strong: var(--video-strong);
+  --color-video-tint: var(--video-tint);
+  --color-on-video: var(--on-video);
+  --color-video-glow: var(--video-glow);
+  --color-pain: var(--pain);
+  --color-pain-text: var(--pain-text);
+  --color-pain-tint: var(--pain-tint);
+  --color-alert: var(--alert);
+  --color-alert-tint: var(--alert-tint);
+  --color-alert-strong: var(--alert-strong);
+  --color-online: var(--online);
+  --color-online-dot: var(--online-dot);
+  --color-online-tint: var(--online-tint);
+  --color-online-border: var(--online-border);
+  --color-whatsapp: var(--whatsapp);
+  --color-on-whatsapp-brand: var(--on-whatsapp-brand);
+  --color-whatsapp-strong: var(--whatsapp-strong);
+  --color-whatsapp-strong-hover: var(--whatsapp-strong-hover);
+  --color-on-whatsapp: var(--on-whatsapp);
+  --color-rating: var(--rating);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -447,6 +526,39 @@ html.lenis, html.lenis body { height: auto; }
 }
 .joint-swap { animation: joint-swap 5s ease-in-out infinite alternate; }
 .joint-swap-reverse { animation-direction: alternate-reverse; }
+
+/*
+ * Indicador "en línea": punto hecho en CSS (no emoji) con halo sutil y un pulso lento.
+ * El pulso se apaga con prefers-reduced-motion y con el interruptor del footer (reglas de abajo).
+ */
+@utility online-dot {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--online-dot);
+  box-shadow: 0 0 0 3px var(--online-tint), 0 0 10px var(--online-glow);
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--online-dot);
+    animation: var(--animate-pulse-ring);
+  }
+}
+
+/* Punto apagado (fuera de horario): mismo tamaño, sin halo ni pulso */
+@utility offline-dot {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  background: var(--on-navy-subtle);
+}
 
 /* Sin barra de scroll en carriles horizontales (tabs/chips) */
 .no-scrollbar { scrollbar-width: none; }

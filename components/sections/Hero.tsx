@@ -41,7 +41,7 @@ export function Hero() {
               rel="noopener noreferrer"
               className={buttonVariants({ variant: "outline", size: "lg" })}
             >
-              <WhatsAppIcon className="text-[#0f7a6c] dark:text-[#25d366]" />
+              <WhatsAppIcon className="text-whatsapp-strong" />
               Escribir por WhatsApp
             </a>
           </div>

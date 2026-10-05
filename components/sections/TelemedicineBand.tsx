@@ -25,7 +25,7 @@ export function TelemedicineBand() {
       <div className="container-page">
         <div className="relative isolate grid items-center gap-12 overflow-hidden rounded-[2rem] bg-navy px-6 py-12 text-white sm:px-10 lg:grid-cols-2 lg:px-14 lg:py-16 dark:bg-navy-3">
           <div aria-hidden className="absolute -left-24 -top-24 -z-10 size-80 rounded-full bg-teal/25 blur-3xl" />
-          <div aria-hidden className="absolute -bottom-24 right-0 -z-10 size-80 rounded-full bg-sky-500/20 blur-3xl" />
+          <div aria-hidden className="absolute -bottom-24 right-0 -z-10 size-80 rounded-full bg-video-strong/20 blur-3xl" />
           <div>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-teal-200">
               <Video aria-hidden strokeWidth={1.75} className="size-4" /> Telemedicina
@@ -50,7 +50,7 @@ export function TelemedicineBand() {
               rel="noopener noreferrer"
               className={`${buttonVariants({ variant: "light", size: "lg" })} mt-8`}
             >
-              <WhatsAppIcon className="text-[#0f7a6c]" />
+              <WhatsAppIcon className="text-whatsapp-strong" />
               Agendar teleconsulta
             </a>
           </div>
@@ -62,7 +62,7 @@ export function TelemedicineBand() {
             />
             <span
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 size-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/30 animate-pulse-ring [animation-delay:1.2s]"
+              className="pointer-events-none absolute left-1/2 top-1/2 size-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-video-glow/30 animate-pulse-ring [animation-delay:1.2s]"
             />
             <div className="animate-float">
               <TiltCard className="mx-auto max-w-lg rounded-[1.75rem]">

@@ -41,7 +41,7 @@ export function HeroHeadline({ id }: HeroHeadlineProps) {
           key={w}
           variants={word}
           aria-hidden
-          className="mr-[0.24em] inline-block bg-gradient-to-r from-primary to-[#0284c7] bg-clip-text text-transparent last:mr-0 dark:from-teal dark:to-sky-300"
+          className="mr-[0.24em] inline-block bg-gradient-to-r from-primary to-video bg-clip-text text-transparent last:mr-0 dark:from-teal"
         >
           {w}
         </motion.span>

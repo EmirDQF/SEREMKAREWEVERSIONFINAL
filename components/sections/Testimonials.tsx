@@ -18,7 +18,7 @@ export function Testimonials() {
           title="Pacientes que volvieron a moverse"
           description={
             <span className="inline-flex flex-wrap items-center justify-center gap-2">
-              <Star aria-hidden className="size-5 fill-amber-400 text-amber-500" />
+              <Star aria-hidden className="size-5 fill-rating text-rating" />
               <strong className="font-semibold text-heading">
                 {formatStat(site.stats.rating, site.stats.rating.value)} de calificación promedio
               </strong>
