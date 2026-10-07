@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { LOCATIONS_PATH } from "@/data/navigation";
 import { site } from "@/data/site";
+import type { ClinicLocation } from "@/types/medical";
 
 interface PageSeo {
   title: string;
@@ -22,6 +24,20 @@ export function buildMetadata({ title, description, path = "/" }: PageSeo): Meta
       type: "website",
     },
     twitter: { card: "summary_large_image", title, description },
+  };
+}
+
+/** «Densitometría ósea en el Callao»: como lo busca el paciente en Google. */
+export function locationPageTitle(location: ClinicLocation): string {
+  return `Densitometría ósea en ${location.placeName ?? location.name}`;
+}
+
+/** Metadata propia de cada sede: título, descripción, canonical y Open Graph únicos. */
+export function locationMetadata(location: ClinicLocation): Metadata {
+  const title = `${locationPageTitle(location)} | ${site.name}`;
+  return {
+    ...buildMetadata({ title, description: location.intro, path: `${LOCATIONS_PATH}/${location.id}` }),
+    title: { absolute: title },
   };
 }
 

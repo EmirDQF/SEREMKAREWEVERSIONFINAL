@@ -12,7 +12,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { BOOKING_HREF } from "@/data/navigation";
 import { site } from "@/data/site";
 import { allWhatsAppLines, locationNamesLabel, primaryLocation } from "@/lib/locations";
-import { breadcrumbSchema } from "@/lib/schema";
+import { ORGANIZATION_ID, breadcrumbSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 
@@ -73,7 +73,7 @@ export default function ContactPage() {
           "@context": "https://schema.org",
           "@type": "ContactPage",
           url: `${site.url}/contacto`,
-          mainEntity: { "@id": `${site.url}/#clinic` },
+          mainEntity: { "@id": ORGANIZATION_ID },
         }}
       />
       <JsonLd data={breadcrumbSchema(CRUMBS)} />

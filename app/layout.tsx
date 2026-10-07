@@ -9,7 +9,7 @@ import { WhatsAppFloat } from "@/components/shared/WhatsAppFloat";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { site } from "@/data/site";
 import { DEFAULT_DESCRIPTION } from "@/lib/seo";
-import { clinicSchema } from "@/lib/schema";
+import { organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
 const inter = Inter({
@@ -85,7 +85,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </noscript>
       </head>
       <body className="min-h-dvh overflow-x-clip">
-        <JsonLd data={clinicSchema()} />
+        <JsonLd data={organizationSchema()} />
         <Providers>
           <SiteHeader />
           <main id="contenido" tabIndex={-1} className="focus:outline-none">

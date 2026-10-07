@@ -13,7 +13,7 @@ import { LOCATIONS_PATH } from "@/data/navigation";
 import { site } from "@/data/site";
 import { findLocation } from "@/lib/locations";
 import { breadcrumbSchema, locationClinicSchema } from "@/lib/schema";
-import { buildMetadata } from "@/lib/seo";
+import { locationMetadata, locationPageTitle } from "@/lib/seo";
 import { locationWhatsApp, withLocation } from "@/lib/whatsapp";
 import type { ClinicLocation } from "@/types/medical";
 
@@ -23,17 +23,10 @@ export function generateStaticParams() {
   return site.locations.map((location) => ({ slug: location.id }));
 }
 
-const locationTitle = (location: ClinicLocation) => `Densitometría ósea en ${location.placeName ?? location.name}`;
-
 export async function generateMetadata({ params }: PageProps<"/sedes/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const location = findLocation(slug);
-  if (!location) return {};
-  const title = `${locationTitle(location)} | ${site.name}`;
-  return {
-    ...buildMetadata({ title, description: location.intro, path: `${LOCATIONS_PATH}/${slug}` }),
-    title: { absolute: title },
-  };
+  return location ? locationMetadata(location) : {};
 }
 
 function NearbyDistricts({ location }: { location: ClinicLocation }) {
@@ -100,7 +93,7 @@ export default async function LocationPage({ params }: PageProps<"/sedes/[slug]"
         id="sede-title"
         crumbs={crumbs}
         eyebrow={`Sede ${location.name}`}
-        title={locationTitle(location)}
+        title={locationPageTitle(location)}
         accent={location.placeName ?? location.name}
         lead={location.intro}
         actions={

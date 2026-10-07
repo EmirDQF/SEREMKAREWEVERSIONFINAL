@@ -50,6 +50,7 @@ const procedureSchema = diagnosticProcedureSchema({
   howPerformed: densitometry.howItWorks.join(" "),
   preparation: densitometry.preparation.join(" "),
   followup: densitometry.followUp,
+  availableAt: site.locations,
 });
 
 export default function DensitometryPage() {
