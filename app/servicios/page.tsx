@@ -15,9 +15,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-const TITLE = `Servicios de reumatología en Lima (San Borja) | ${site.name}`;
+const TITLE = `Servicios de reumatología en Lima Norte y Callao | ${site.name}`;
 const DESCRIPTION =
-  "Apoyo diagnóstico, terapia biológica, telemedicina, procedimientos ecoguiados y consulta externa multidisciplinaria en una sola sede en San Borja, Lima.";
+  "Apoyo diagnóstico, terapia biológica, telemedicina, procedimientos ecoguiados y consulta externa multidisciplinaria en una sola sede en Lima Norte y Callao.";
 const CRUMBS = [
   { label: "Inicio", href: "/" },
   { label: "Servicios", href: "/servicios" },

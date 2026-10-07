@@ -2,20 +2,22 @@
 
 import { useId, useRef, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
-import { Clock, Mail, MapPin, ShieldCheck, User, Users, Video } from "lucide-react";
-import type { Appointment, AppointmentFor, Modality } from "@/types/medical";
+import { Clock, HelpCircle, Mail, MapPin, ShieldCheck, User, Users, Video } from "lucide-react";
+import type { Appointment, AppointmentFor, LocationChoice, Modality } from "@/types/medical";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { SuccessBurst } from "@/components/shared/SuccessBurst";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { buttonVariants } from "@/components/ui/button";
 import { site } from "@/data/site";
 import { specialties } from "@/data/specialties";
+import { locationNamesLabel, primaryLocation, primaryWhatsAppLine } from "@/lib/locations";
 import { todayISO } from "@/lib/schedule";
 import {
   FIELD_LIMITS,
+  appointmentWhatsAppNumber,
   buildAppointmentMessage,
   buildMailtoLink,
-  clinicWhatsApp,
+  buildWhatsAppLink,
   validateAppointment,
   type AppointmentErrors,
   type AppointmentField,
@@ -24,7 +26,20 @@ import { cn } from "@/lib/utils";
 
 const NOT_SURE = "Aún no lo sé (orientación general)";
 const SPECIALTY_OPTIONS = [...specialties.map((s) => s.name), "Dolor de espalda o cuello", "Lesión deportiva", NOT_SURE];
-const FIELD_ORDER: readonly AppointmentField[] = ["specialty", "fullName", "phone", "reason", "preferredDate", "consent"];
+const FIELD_ORDER: readonly AppointmentField[] = [
+  "location",
+  "specialty",
+  "fullName",
+  "phone",
+  "reason",
+  "preferredDate",
+  "consent",
+];
+
+interface SentRequest {
+  message: string;
+  number: string;
+}
 
 const INPUT =
   "min-h-12 w-full rounded-2xl border border-line-strong bg-card-solid px-4 text-fg placeholder:text-subtle transition-colors focus:border-primary focus:outline-none aria-[invalid=true]:border-coral";
@@ -34,14 +49,17 @@ const noopSubscribe = () => () => {};
 interface ChoiceProps<T extends string> {
   name: string;
   value: T;
-  current: T;
+  current: T | undefined;
   onChange: (value: T) => void;
   icon: ReactNode;
   title: string;
   hint: string;
+  /** id del input (para enfocarlo cuando el grupo tiene un error). */
+  inputId?: string;
+  describedBy?: string;
 }
 
-function Choice<T extends string>({ name, value, current, onChange, icon, title, hint }: ChoiceProps<T>) {
+function Choice<T extends string>({ name, value, current, onChange, icon, title, hint, inputId, describedBy }: ChoiceProps<T>) {
   const checked = value === current;
   return (
     <label
@@ -50,7 +68,16 @@ function Choice<T extends string>({ name, value, current, onChange, icon, title,
         checked ? "border-primary bg-teal-tint" : "border-line-strong bg-card-solid hover:border-primary",
       )}
     >
-      <input type="radio" name={name} value={value} checked={checked} onChange={() => onChange(value)} className="sr-only" />
+      <input
+        id={inputId}
+        type="radio"
+        name={name}
+        value={value}
+        checked={checked}
+        onChange={() => onChange(value)}
+        aria-describedby={describedBy}
+        className="sr-only"
+      />
       <span className={cn("grid size-10 shrink-0 place-items-center rounded-xl [&_svg]:size-5", checked ? "bg-primary text-on-primary" : "bg-bg-alt text-primary")}>
         {icon}
       </span>
@@ -75,9 +102,10 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 export function AppointmentForm() {
   const id = useId();
   const formRef = useRef<HTMLFormElement>(null);
-  const minDate = useSyncExternalStore(noopSubscribe, () => todayISO(site.hours.timeZone), () => undefined);
+  const minDate = useSyncExternalStore(noopSubscribe, () => todayISO(site.timeZone), () => undefined);
 
   const [modality, setModality] = useState<Modality>("presencial");
+  const [location, setLocation] = useState<LocationChoice | undefined>(undefined);
   const [forWhom, setForWhom] = useState<AppointmentFor>("mi");
   const [specialty, setSpecialty] = useState("");
   const [fullName, setFullName] = useState("");
@@ -86,7 +114,7 @@ export function AppointmentForm() {
   const [preferredDate, setPreferredDate] = useState("");
   const [consent, setConsent] = useState(false);
   const [errors, setErrors] = useState<AppointmentErrors>({});
-  const [sentMessage, setSentMessage] = useState<string | null>(null);
+  const [sent, setSent] = useState<SentRequest | null>(null);
 
   const fieldId = (field: AppointmentField) => `${id}-${field}`;
   const errorId = (field: AppointmentField) => `${id}-${field}-error`;
@@ -95,6 +123,7 @@ export function AppointmentForm() {
   function buildAppointment(): Appointment {
     return {
       modality,
+      location: modality === "presencial" ? location : undefined,
       forWhom,
       specialty,
       fullName,
@@ -114,12 +143,13 @@ export function AppointmentForm() {
       formRef.current?.querySelector<HTMLElement>(`#${CSS.escape(fieldId(firstInvalid))}`)?.focus();
       return;
     }
-    const message = buildAppointmentMessage(appointment);
-    window.open(clinicWhatsApp(message), "_blank", "noopener,noreferrer");
-    setSentMessage(message);
+    const request = { message: buildAppointmentMessage(appointment), number: appointmentWhatsAppNumber(appointment) };
+    window.open(buildWhatsAppLink(request.number, request.message), "_blank", "noopener,noreferrer");
+    setSent(request);
   }
 
   function resetForm() {
+    setLocation(undefined);
     setSpecialty("");
     setFullName("");
     setPhone("");
@@ -127,7 +157,7 @@ export function AppointmentForm() {
     setPreferredDate("");
     setConsent(false);
     setErrors({});
-    setSentMessage(null);
+    setSent(null);
   }
 
   return (
@@ -145,17 +175,15 @@ export function AppointmentForm() {
             <li className="flex gap-3">
               <Clock aria-hidden strokeWidth={1.75} className="mt-0.5 size-6 shrink-0 text-primary" />
               <span>
-                <strong className="block font-display text-heading">Te respondemos en horario de atención</strong>
-                <span className="text-muted">{site.hours.label}</span>
+                <strong className="block font-display text-heading">Te respondemos por WhatsApp</strong>
+                <span className="text-muted">{primaryLocation().hours.label}</span>
               </span>
             </li>
             <li className="flex gap-3">
               <MapPin aria-hidden strokeWidth={1.75} className="mt-0.5 size-6 shrink-0 text-primary" />
               <span>
-                <strong className="block font-display text-heading">Sede {site.address.district}</strong>
-                <span className="text-muted">
-                  {site.address.street}, {site.address.district}
-                </span>
+                <strong className="block font-display text-heading">{site.locations.length} sedes</strong>
+                <span className="text-muted">{locationNamesLabel()}</span>
               </span>
             </li>
             <li className="flex gap-3">
@@ -169,17 +197,16 @@ export function AppointmentForm() {
         </div>
 
         <div className="rounded-[2rem] border border-line bg-card-solid p-6 shadow-lift sm:p-8">
-          {sentMessage ? (
+          {sent ? (
             <div role="status" className="text-center">
               <SuccessBurst />
               <h3 className="text-h3 mt-4">¡Listo! Tu solicitud está en WhatsApp</h3>
               <p className="mt-2 text-muted">
-                Envía el mensaje que se abrió y te confirmaremos tu cita. Te respondemos en horario de atención (
-                {site.hours.label.toLowerCase()}).
+                Envía el mensaje que se abrió y te confirmaremos tu cita por ese mismo chat.
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <a
-                  href={clinicWhatsApp(sentMessage)}
+                  href={buildWhatsAppLink(sent.number, sent.message)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={buttonVariants({ variant: "whatsapp" })}
@@ -187,7 +214,7 @@ export function AppointmentForm() {
                   <WhatsAppIcon /> Abrir WhatsApp de nuevo
                 </a>
                 <a
-                  href={buildMailtoLink(site.email, "Solicitud de cita", sentMessage)}
+                  href={buildMailtoLink(site.email, "Solicitud de cita", sent.message)}
                   className={buttonVariants({ variant: "outline" })}
                 >
                   <Mail aria-hidden strokeWidth={1.75} /> Enviar por correo
@@ -209,7 +236,7 @@ export function AppointmentForm() {
                     onChange={setModality}
                     icon={<MapPin aria-hidden strokeWidth={1.75} />}
                     title="Presencial"
-                    hint={`Sede ${site.address.district}`}
+                    hint={`En nuestras ${site.locations.length} sedes`}
                   />
                   <Choice
                     name="modality"
@@ -221,6 +248,36 @@ export function AppointmentForm() {
                     hint="Desde tu casa u oficina"
                   />
                 </div>
+                {modality === "presencial" ? (
+                  <fieldset className="mt-5" aria-describedby={describedBy("location")}>
+                    <legend className="text-sm font-semibold text-heading">¿En qué sede?</legend>
+                    <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                      {site.locations.map((option, index) => (
+                        <Choice
+                          key={option.id}
+                          name="location"
+                          value={option.id}
+                          current={location}
+                          onChange={setLocation}
+                          inputId={index === 0 ? fieldId("location") : undefined}
+                          icon={<MapPin aria-hidden strokeWidth={1.75} />}
+                          title={option.name}
+                          hint={option.reference ?? option.street}
+                        />
+                      ))}
+                      <Choice
+                        name="location"
+                        value="cualquiera"
+                        current={location}
+                        onChange={setLocation}
+                        icon={<HelpCircle aria-hidden strokeWidth={1.75} />}
+                        title="La más cercana / no sé"
+                        hint="Te orientamos por WhatsApp"
+                      />
+                    </div>
+                    <FieldError id={errorId("location")} message={errors.location} />
+                  </fieldset>
+                ) : null}
               </fieldset>
 
               <fieldset>
@@ -377,8 +434,8 @@ export function AppointmentForm() {
               </button>
               <p className="text-center text-sm text-muted">
                 ¿Prefieres llamar?{" "}
-                <a href={`tel:${site.phone.tel}`} className="font-semibold text-link hover:underline">
-                  {site.phone.display}
+                <a href={`tel:+${primaryWhatsAppLine().number}`} className="font-semibold text-link hover:underline">
+                  {primaryWhatsAppLine().display}
                 </a>
               </p>
             </form>

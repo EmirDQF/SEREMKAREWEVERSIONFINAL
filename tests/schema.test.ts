@@ -1,6 +1,60 @@
 import { describe, expect, it } from "vitest";
-import { breadcrumbSchema, diagnosticProcedureSchema, medicalServiceSchema, procedureSchema } from "@/lib/schema";
+import {
+  breadcrumbSchema,
+  clinicSchema,
+  diagnosticProcedureSchema,
+  locationClinicSchema,
+  medicalServiceSchema,
+  procedureSchema,
+} from "@/lib/schema";
+import { getLocation, primaryLocation } from "@/lib/locations";
 import { site } from "@/data/site";
+
+describe("clinicSchema", () => {
+  it("uses the main WhatsApp line and the main branch address", () => {
+    const schema = clinicSchema() as { telephone: string; legalName: string; address: { addressLocality: string } };
+    expect(schema.telephone).toBe("+51994931540");
+    expect(schema.legalName).toBe("KARE SAC");
+    expect(schema.address.addressLocality).toBe(primaryLocation().district);
+  });
+
+  it("does not publish opening hours until they are confirmed", () => {
+    expect(primaryLocation().hours.confirmed).toBe(false);
+    expect(clinicSchema()).not.toHaveProperty("openingHoursSpecification");
+  });
+});
+
+describe("locationClinicSchema", () => {
+  const schema = locationClinicSchema(getLocation("callao")) as Record<string, unknown> & {
+    address: { addressLocality: string };
+    areaServed: { name: string }[];
+    availableService: { "@type": string; name: string };
+  };
+
+  it("has its own @id and belongs to the organization", () => {
+    expect(schema["@id"]).toBe(`${site.url}/sedes/callao#clinic`);
+    expect(schema.parentOrganization).toEqual({ "@id": `${site.url}/#clinic` });
+  });
+
+  it("uses the branch WhatsApp, map and hospital reference", () => {
+    const location = getLocation("callao");
+    expect(schema.telephone).toBe(`+${location.whatsapp.number}`);
+    expect(schema.hasMap).toBe(location.mapsUrl);
+    expect(schema.description).toContain("Daniel Alcides Carrión");
+    expect(schema.address.addressLocality).toBe("Callao");
+  });
+
+  it("serves nearby districts and offers bone densitometry", () => {
+    expect(schema.areaServed.map((area) => area.name)).toEqual(getLocation("callao").nearbyDistricts);
+    expect(schema.availableService).toEqual({ "@type": "DiagnosticProcedure", name: "Densitometría ósea (DXA)" });
+  });
+
+  it("never invents coordinates, ratings or unconfirmed hours", () => {
+    expect(schema).not.toHaveProperty("geo");
+    expect(schema).not.toHaveProperty("aggregateRating");
+    expect(schema).not.toHaveProperty("openingHoursSpecification");
+  });
+});
 
 describe("breadcrumbSchema", () => {
   it("lists absolute URLs in order", () => {

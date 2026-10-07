@@ -1,16 +1,21 @@
 import { describe, expect, it } from "vitest";
 import {
+  appointmentWhatsAppNumber,
   buildAppointmentMessage,
   buildMailtoLink,
   buildWhatsAppLink,
+  locationWhatsApp,
   messageAbout,
   messageForDoctor,
   validateAppointment,
+  withLocation,
 } from "@/lib/whatsapp";
+import { getLocation, primaryWhatsAppLine } from "@/lib/locations";
 import type { Appointment } from "@/types/medical";
 
 const base: Appointment = {
   modality: "presencial",
+  location: "callao",
   forWhom: "familiar",
   specialty: "Artrosis",
   fullName: "  María Pérez ",
@@ -21,8 +26,8 @@ const base: Appointment = {
 
 describe("buildWhatsAppLink", () => {
   it("encodes the message and strips non-digits from the number", () => {
-    const link = buildWhatsAppLink("+51 999 000 000", "Hola & gracias");
-    expect(link).toBe("https://wa.me/51999000000?text=Hola%20%26%20gracias");
+    const link = buildWhatsAppLink("+51 994 931 540", "Hola & gracias");
+    expect(link).toBe("https://wa.me/51994931540?text=Hola%20%26%20gracias");
   });
 });
 
@@ -30,7 +35,8 @@ describe("buildAppointmentMessage", () => {
   it("includes every field in a structured, trimmed message", () => {
     const msg = buildAppointmentMessage({ ...base, doctorName: "Dra. Lucía Andrade" });
     expect(msg).toContain("Hola SERMEKARE, quisiera agendar una consulta.");
-    expect(msg).toContain("• Modalidad: Presencial (sede San Borja)");
+    expect(msg).toContain("• Modalidad: Presencial");
+    expect(msg).toContain("• Sede: Callao (frente al Hosp. Daniel A. Carrión)");
     expect(msg).toContain("• Para: Un familiar");
     expect(msg).toContain("• Especialidad: Artrosis");
     expect(msg).toContain("• Médico: Dra. Lucía Andrade");
@@ -40,12 +46,30 @@ describe("buildAppointmentMessage", () => {
     expect(msg).toContain("• Fecha preferida: lunes 12 de octubre");
   });
 
-  it("omits optional fields when missing", () => {
+  it("says «la más cercana» when the patient does not know the branch", () => {
+    expect(buildAppointmentMessage({ ...base, location: "cualquiera" })).toContain(
+      "• Sede: La más cercana (por coordinar)",
+    );
+  });
+
+  it("omits optional fields and the branch for teleconsultations", () => {
     const msg = buildAppointmentMessage({ ...base, preferredDate: undefined, modality: "teleconsulta", forWhom: "mi" });
     expect(msg).not.toContain("Médico");
     expect(msg).not.toContain("Fecha preferida");
+    expect(msg).not.toContain("Sede");
     expect(msg).toContain("• Modalidad: Teleconsulta");
     expect(msg).toContain("• Para: Mí");
+  });
+});
+
+describe("appointmentWhatsAppNumber", () => {
+  it("sends the request to the chosen branch", () => {
+    expect(appointmentWhatsAppNumber(base)).toBe(getLocation("callao").whatsapp.number);
+  });
+
+  it("falls back to the main line when the branch is unknown or it is a teleconsultation", () => {
+    expect(appointmentWhatsAppNumber({ ...base, location: "cualquiera" })).toBe(primaryWhatsAppLine().number);
+    expect(appointmentWhatsAppNumber({ ...base, modality: "teleconsulta" })).toBe(primaryWhatsAppLine().number);
   });
 });
 
@@ -59,9 +83,28 @@ describe("validateAppointment", () => {
     expect(Object.keys(errors).sort()).toEqual(["consent", "fullName", "phone", "reason"]);
   });
 
+  it("requires a branch for in-person visits only", () => {
+    const now = new Date("2026-10-03T12:00:00-05:00");
+    expect(validateAppointment({ ...base, location: undefined }, true, now).location).toBeDefined();
+    expect(validateAppointment({ ...base, location: undefined, modality: "teleconsulta" }, true, now)).toEqual({});
+  });
+
   it("rejects a past preferred date", () => {
     const errors = validateAppointment({ ...base, preferredDate: "2020-01-01" }, true, new Date("2026-10-03T12:00:00-05:00"));
     expect(errors.preferredDate).toBeDefined();
+  });
+});
+
+describe("withLocation y locationWhatsApp", () => {
+  it("adds the branch to a prefilled message", () => {
+    expect(withLocation("Hola SERMEKARE, quisiera agendar una densitometría ósea.", getLocation("los-olivos"))).toBe(
+      "Hola SERMEKARE, quisiera agendar una densitometría ósea en la sede de Los Olivos.",
+    );
+  });
+
+  it("opens the WhatsApp of that branch", () => {
+    const location = getLocation("puente-piedra");
+    expect(locationWhatsApp(location, "Hola")).toBe(`https://wa.me/${location.whatsapp.number}?text=Hola`);
   });
 });
 

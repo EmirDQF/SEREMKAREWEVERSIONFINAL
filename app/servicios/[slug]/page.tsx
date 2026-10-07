@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps<"/servicios/[slug]"
   const { slug } = await params;
   const pillar = findPillar(slug);
   if (!pillar) return {};
-  const title = `${pillar.name} en San Borja, Lima | ${site.name}`;
+  const title = `${pillar.name} en Lima Norte y Callao | ${site.name}`;
   return {
     ...buildMetadata({ title, description: `${pillar.tagline} ${getServiceDetail(slug).intro}`, path: servicePath(slug) }),
     title: { absolute: title },

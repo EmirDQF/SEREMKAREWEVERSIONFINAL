@@ -114,7 +114,7 @@ export function ComplaintForm() {
       formRef.current?.querySelector<HTMLElement>(`#${CSS.escape(fieldId(firstInvalid))}`)?.focus();
       return;
     }
-    setMessage(buildComplaintMessage(complaint, todayISO(site.hours.timeZone)));
+    setMessage(buildComplaintMessage(complaint, todayISO(site.timeZone)));
   }
 
   async function copyMessage() {

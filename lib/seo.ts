@@ -26,4 +26,4 @@ export function buildMetadata({ title, description, path = "/" }: PageSeo): Meta
 }
 
 export const DEFAULT_DESCRIPTION =
-  "Reumatólogos certificados en San Borja, Lima. Diagnóstico oportuno de artrosis, artritis reumatoide, gota, lupus y osteoporosis, infiltraciones ecoguiadas y teleconsulta. Agenda por WhatsApp.";
+  "Reumatólogos certificados en Lima Norte y Callao. Diagnóstico oportuno de artrosis, artritis reumatoide, gota, lupus y osteoporosis, infiltraciones ecoguiadas y teleconsulta. Agenda por WhatsApp.";

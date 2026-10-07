@@ -12,6 +12,50 @@ export interface OpeningHours {
   timeZone: string;
   label: string;
   closedLabel: string;
+  /** Solo si es true se muestra «Abierto ahora / Cerrado» y se publica en el JSON-LD. */
+  confirmed: boolean;
+}
+
+export type LocationId = "los-olivos" | "callao" | "puente-piedra";
+
+/** Sede elegida en el formulario: una sede concreta o «la más cercana / no sé». */
+export type LocationChoice = LocationId | "cualquiera";
+
+export interface WhatsAppLine {
+  label: string;
+  /** Como se muestra: "+51 994 931 540". */
+  display: string;
+  /** Para wa.me y tel:, solo dígitos con código de país: "51994931540". */
+  number: string;
+}
+
+export interface ClinicLocation {
+  id: LocationId;
+  name: string;
+  /** Cómo se nombra el lugar en una frase: «en el Callao». Por defecto, el nombre. */
+  placeName?: string;
+  street: string;
+  district: string;
+  city: string;
+  region: string;
+  /** Referencia para llegar (p. ej. «Frente al Hospital …»). Es lo que más ayuda al paciente. */
+  reference?: string;
+  /** Versión corta de la referencia para mensajes de WhatsApp. */
+  shortReference?: string;
+  whatsapp: WhatsAppLine;
+  hours: OpeningHours;
+  mapsUrl: string;
+  mapsEmbedUrl: string;
+  /** Solo con coordenadas confirmadas. */
+  geo?: { lat: number; lng: number };
+  howToArrive: readonly string[];
+  /** Presentación propia de la sede (página /sedes/[slug]). */
+  intro: string;
+  /** Distritos cercanos que atiende la sede (SEO local y areaServed). */
+  nearbyDistricts: readonly string[];
+  /** Estudios disponibles en esta sede. */
+  services: readonly string[];
+  provisional: boolean;
 }
 
 export interface SocialLink {
@@ -30,23 +74,21 @@ export interface TrustStat {
 
 export interface SiteConfig {
   name: string;
+  /** Razón social que figura en la tarjeta y en los documentos legales. */
+  legalName: string;
+  /** RUC (obligatorio para el Libro de Reclamaciones). */
+  taxId?: string;
   legalTagline: string;
   slogan: string;
   domain: string;
   url: string;
-  address: {
-    street: string;
-    district: string;
-    city: string;
-    country: string;
-    mapsUrl: string;
-    mapsEmbedUrl: string;
-    howToArrive: readonly string[];
-  };
-  phone: { display: string; tel: string };
-  whatsapp: { display: string; number: string; defaultMessage: string };
+  timeZone: string;
+  locations: readonly ClinicLocation[];
+  primaryLocationId: LocationId;
+  /** Las líneas de WhatsApp de la empresa; la primera es la principal. */
+  whatsappLines: readonly WhatsAppLine[];
+  defaultWhatsAppMessage: string;
   email: string;
-  hours: OpeningHours;
   socials: readonly SocialLink[];
   stats: {
     consultations: TrustStat;
@@ -198,6 +240,8 @@ export type AppointmentFor = "mi" | "familiar";
 
 export interface Appointment {
   modality: Modality;
+  /** Obligatoria en la modalidad presencial. */
+  location?: LocationChoice;
   forWhom: AppointmentFor;
   specialty: string;
   doctorName?: string;

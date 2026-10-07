@@ -9,6 +9,7 @@ const hours: OpeningHours = {
   timeZone: "America/Lima",
   label: "Lun a sáb · 8:00 a.m. – 8:00 p.m.",
   closedLabel: "Domingo cerrado",
+  confirmed: true,
 };
 
 // Lima es UTC-5 todo el año (sin horario de verano).

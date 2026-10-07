@@ -1,15 +1,17 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { site } from "@/data/site";
-import { getOpenStatus, type OpenStatus } from "@/lib/schedule";
+import { locationOpenStatus, primaryLocation } from "@/lib/locations";
+import type { OpenStatus } from "@/lib/schedule";
 
 const REFRESH_MS = 60_000;
 
 let cached: OpenStatus | null = null;
+let initialized = false;
 
 function refresh(): void {
-  cached = getOpenStatus(site.hours);
+  cached = locationOpenStatus(primaryLocation());
+  initialized = true;
 }
 
 function subscribe(onChange: () => void): () => void {
@@ -21,15 +23,15 @@ function subscribe(onChange: () => void): () => void {
 }
 
 function getSnapshot(): OpenStatus | null {
-  if (!cached) refresh();
+  if (!initialized) refresh();
   return cached;
 }
 
 const getServerSnapshot = (): OpenStatus | null => null;
 
 /**
- * Estado "Abierto ahora / Cerrado" en hora de Lima.
- * Devuelve null en el servidor y durante la hidratación (evita desajustes), y el estado real en el cliente.
+ * Estado "Abierto ahora / Cerrado" de la sede principal, en hora de Lima.
+ * Devuelve null en el servidor, durante la hidratación y mientras el horario no esté confirmado.
  */
 export function useOpenStatus(): OpenStatus | null {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);

@@ -25,7 +25,7 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const DEFAULT_TITLE = `Reumatólogo en Lima (San Borja) | ${site.name}`;
+const DEFAULT_TITLE = `Reumatólogo en Lima Norte y Callao | ${site.name}`;
 
 /** Deben coincidir con THEME_STORAGE_KEY (lib/theme.ts) y MOTION_STORAGE_KEY (lib/motion-preference.ts). */
 const THEME_STORAGE_KEY = "sermekare-theme";
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   applicationName: site.name,
   keywords: [
     "reumatólogo en Lima",
-    "reumatólogo San Borja",
+    "reumatólogo Lima Norte",
     "infiltración ecoguiada Lima",
     "tratamiento artritis reumatoide Lima",
     "viscosuplementación rodilla Lima",

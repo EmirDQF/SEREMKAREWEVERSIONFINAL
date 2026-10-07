@@ -1,5 +1,6 @@
 import { site } from "@/data/site";
-import type { FAQItem } from "@/types/medical";
+import { primaryLocation, primaryWhatsAppLine } from "@/lib/locations";
+import type { ClinicLocation, FAQItem, OpeningHours } from "@/types/medical";
 
 type JsonLdObject = Record<string, unknown>;
 
@@ -8,40 +9,75 @@ const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frid
 const toTime = (minutes: number) =>
   `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
 
+function postalAddress(location: ClinicLocation): JsonLdObject {
+  return {
+    "@type": "PostalAddress",
+    streetAddress: location.street,
+    addressLocality: location.district,
+    addressRegion: location.region,
+    addressCountry: "PE",
+  };
+}
+
+/** Solo se publica el horario confirmado: un horario falso en Google es peor que ninguno. */
+function openingHours(hours: OpeningHours): JsonLdObject {
+  if (!hours.confirmed) return {};
+  return {
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: hours.days.map((d) => DAY_NAMES[d]),
+        opens: toTime(hours.opensAt),
+        closes: toTime(hours.closesAt),
+      },
+    ],
+  };
+}
+
 /**
  * MedicalClinic. No incluye aggregateRating a propósito: Google exige reseñas reales
  * y verificables; agregarlo cuando existan reseñas de pacientes reales.
  */
 export function clinicSchema(): JsonLdObject {
+  const location = primaryLocation();
   return {
     "@context": "https://schema.org",
     "@type": "MedicalClinic",
     "@id": `${site.url}/#clinic`,
     name: `${site.name} — ${site.legalTagline}`,
+    legalName: site.legalName,
+    ...(site.taxId ? { taxID: site.taxId } : {}),
     url: site.url,
     logo: `${site.url}/icon.svg`,
     image: `${site.url}/opengraph-image`,
-    telephone: site.phone.tel,
+    telephone: `+${primaryWhatsAppLine().number}`,
     email: site.email,
     slogan: site.slogan,
     medicalSpecialty: ["Rheumatologic", "PhysicalTherapy"],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: site.address.street,
-      addressLocality: site.address.district,
-      addressRegion: site.address.city,
-      addressCountry: "PE",
-    },
-    openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: site.hours.days.map((d) => DAY_NAMES[d]),
-        opens: toTime(site.hours.opensAt),
-        closes: toTime(site.hours.closesAt),
-      },
-    ],
+    address: postalAddress(location),
+    ...openingHours(location.hours),
     availableService: { "@type": "MedicalTherapy", name: "Teleconsulta" },
     sameAs: site.socials.map((s) => s.href),
+  };
+}
+
+/** MedicalClinic de una sede, enlazada a la organización. Sin geo hasta tener coordenadas confirmadas. */
+export function locationClinicSchema(location: ClinicLocation): JsonLdObject {
+  const path = `/sedes/${location.id}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "MedicalClinic",
+    "@id": `${site.url}${path}#clinic`,
+    name: `${site.name} — Sede ${location.name}`,
+    url: `${site.url}${path}`,
+    parentOrganization: { "@id": `${site.url}/#clinic` },
+    description: [location.reference, location.intro].filter(Boolean).join(". "),
+    telephone: `+${location.whatsapp.number}`,
+    address: postalAddress(location),
+    hasMap: location.mapsUrl,
+    ...openingHours(location.hours),
+    areaServed: location.nearbyDistricts.map((name) => ({ "@type": "AdministrativeArea", name })),
+    availableService: { "@type": "DiagnosticProcedure", name: "Densitometría ósea (DXA)" },
   };
 }
 
@@ -182,13 +218,7 @@ export function physicianSchema(info: PhysicianInfo): JsonLdObject {
     description: info.specialty,
     knowsAbout: info.knowsAbout,
     worksFor: { "@id": `${site.url}/#clinic` },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: site.address.street,
-      addressLocality: site.address.district,
-      addressRegion: site.address.city,
-      addressCountry: "PE",
-    },
+    address: postalAddress(primaryLocation()),
   };
 }
 

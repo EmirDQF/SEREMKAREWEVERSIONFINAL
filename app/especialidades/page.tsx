@@ -17,7 +17,7 @@ import { buildMetadata } from "@/lib/seo";
 
 const TITLE = `Especialidades: artrosis, artritis, gota, lupus y más | ${site.name}`;
 const DESCRIPTION =
-  "Conoce las enfermedades reumáticas que tratamos en San Borja: artrosis, artritis reumatoide, gota, lupus, fibromialgia, osteoporosis y espondiloartritis.";
+  "Conoce las enfermedades reumáticas que tratamos en Lima Norte y Callao: artrosis, artritis reumatoide, gota, lupus, fibromialgia, osteoporosis y espondiloartritis.";
 const CRUMBS = [
   { label: "Inicio", href: "/" },
   { label: "Especialidades", href: "/especialidades" },

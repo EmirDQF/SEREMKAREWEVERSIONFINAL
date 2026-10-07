@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { buttonVariants } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { clinicWhatsApp, messageForDoctor } from "@/lib/whatsapp";
-import { site } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 const MODALITY_LABEL: Record<DoctorSchedule["modality"], string> = {
@@ -58,7 +57,7 @@ export function DoctorAvailabilityDialog({ doctor, triggerClassName }: DoctorAva
         </ul>
 
         <p className="mt-5 text-[0.95rem] text-muted">
-          Te confirmamos el horario exacto por WhatsApp. Atendemos {site.hours.label.toLowerCase()}.
+          Te confirmamos el horario exacto por WhatsApp. Atendemos con cita previa.
         </p>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
