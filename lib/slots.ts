@@ -1,5 +1,5 @@
 import { formatTime, getZonedClock, todayISO } from "@/lib/schedule";
-import type { OpeningHours, Slot, TimeWindow, Weekday } from "@/types/medical";
+import type { TeleconsultHours, Slot, TimeWindow, Weekday } from "@/types/medical";
 
 const WEEKDAYS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"] as const;
 const MONTHS = [
@@ -37,7 +37,7 @@ export function formatSlot(slot: Slot): string {
 }
 
 /** Inicios de turno dentro del horario del sitio, recortados a la franja indicada (p. ej. la de un doctor). */
-export function slotStarts(hours: OpeningHours, window?: TimeWindow): number[] {
+export function slotStarts(hours: TeleconsultHours, window?: TimeWindow): number[] {
   const from = Math.max(hours.opensAt, window?.from ?? hours.opensAt);
   const to = Math.min(hours.closesAt, window?.to ?? hours.closesAt);
   const starts: number[] = [];
@@ -48,7 +48,7 @@ export function slotStarts(hours: OpeningHours, window?: TimeWindow): number[] {
 }
 
 /** Turnos que todavía se pueden reservar ese día (hoy: solo con la anticipación mínima). */
-export function availableSlots(hours: OpeningHours, iso: string, now: Date, window?: TimeWindow): number[] {
+export function availableSlots(hours: TeleconsultHours, iso: string, now: Date, window?: TimeWindow): number[] {
   const today = todayISO(hours.timeZone, now);
   if (iso < today || !hours.days.includes(weekdayOfISO(iso))) return [];
   const starts = slotStarts(hours, window);
@@ -58,7 +58,7 @@ export function availableSlots(hours: OpeningHours, iso: string, now: Date, wind
 }
 
 /** Próximos días hábiles con turnos disponibles (hoy incluido si aún quedan). */
-export function nextBusinessDays(hours: OpeningHours, count: number, now: Date): string[] {
+export function nextBusinessDays(hours: TeleconsultHours, count: number, now: Date): string[] {
   const today = todayISO(hours.timeZone, now);
   const days: string[] = [];
   for (let offset = 0; offset < MAX_LOOKAHEAD_DAYS && days.length < count; offset++) {
@@ -68,7 +68,7 @@ export function nextBusinessDays(hours: OpeningHours, count: number, now: Date):
   return days;
 }
 
-export function isSlotAvailable(hours: OpeningHours, slot: Slot, now: Date, window?: TimeWindow): boolean {
+export function isSlotAvailable(hours: TeleconsultHours, slot: Slot, now: Date, window?: TimeWindow): boolean {
   return availableSlots(hours, slot.date, now, window).includes(slot.minutes);
 }
 

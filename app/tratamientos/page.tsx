@@ -10,7 +10,7 @@ import { treatments } from "@/data/treatments";
 import { breadcrumbSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 
-const TITLE = `Tratamientos de reumatología en Lima (San Borja) | ${site.name}`;
+const TITLE = `Tratamientos de reumatología en Lima Norte y Callao | ${site.name}`;
 const DESCRIPTION =
   "Infiltraciones ecoguiadas, terapias biológicas, viscosuplementación, terapia física, laboratorio y densitometría, y videocapilaroscopía, explicados con claridad.";
 const CRUMBS = [

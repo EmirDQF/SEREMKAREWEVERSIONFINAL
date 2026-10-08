@@ -38,8 +38,8 @@ const DIFFERENTIATORS: readonly Differentiator[] = [
   },
   {
     icon: CalendarClock,
-    title: "Horario extendido",
-    text: `${site.hours.label}. Para que no tengas que pedir el día libre.`,
+    title: "Atención con cita previa",
+    text: "Coordinas el día y la hora por WhatsApp, en la sede que te quede más cerca.",
     className: "lg:col-span-2",
   },
 ];

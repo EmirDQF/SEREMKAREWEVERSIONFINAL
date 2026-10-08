@@ -20,7 +20,7 @@ import { LocationCTA } from "@/components/sections/LocationCTA";
 import { site } from "@/data/site";
 import { DEFAULT_DESCRIPTION, buildMetadata } from "@/lib/seo";
 
-const HOME_TITLE = `Reumatólogo en Lima (San Borja) | ${site.name}`;
+const HOME_TITLE = `Reumatólogo en Lima Norte y Callao | ${site.name}`;
 
 export const metadata: Metadata = {
   ...buildMetadata({ title: HOME_TITLE, description: DEFAULT_DESCRIPTION, path: "/" }),

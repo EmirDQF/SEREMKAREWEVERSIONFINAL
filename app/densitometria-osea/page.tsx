@@ -19,9 +19,9 @@ import { site } from "@/data/site";
 import { breadcrumbSchema, diagnosticProcedureSchema, faqSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 
-const TITLE = `Densitometría ósea en Lima (San Borja) | ${site.name}`;
+const TITLE = `Densitometría ósea en Lima Norte y Callao | ${site.name}`;
 const DESCRIPTION =
-  "Densitometría ósea (DXA) en San Borja: prueba rápida e indolora para detectar osteopenia y osteoporosis antes de una fractura. Resultados el mismo día o en 24 horas. Agenda por WhatsApp.";
+  "Densitometría ósea (DXA) en Los Olivos, Callao y Puente Piedra: prueba rápida e indolora para detectar osteopenia y osteoporosis antes de una fractura. Resultados el mismo día o en 24 horas. Agenda por WhatsApp.";
 
 const CRUMBS = [
   { label: "Inicio", href: "/" },
@@ -50,6 +50,7 @@ const procedureSchema = diagnosticProcedureSchema({
   howPerformed: densitometry.howItWorks.join(" "),
   preparation: densitometry.preparation.join(" "),
   followup: densitometry.followUp,
+  availableAt: site.locations,
 });
 
 export default function DensitometryPage() {

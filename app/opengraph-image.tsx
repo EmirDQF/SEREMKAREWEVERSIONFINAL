@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/data/site";
+import { locationNamesLabel } from "@/lib/locations";
 
-export const alt = `${site.name} — ${site.legalTagline} en ${site.address.district}, Lima`;
+export const alt = `${site.name} — ${site.legalTagline} en ${locationNamesLabel()}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -48,7 +49,7 @@ export default function OpengraphImage() {
           </div>
         </div>
         <div style={{ display: "flex", fontSize: 26, color: "#5EEAD4" }}>
-          {site.legalTagline} · {site.address.district}, Lima
+          {site.legalTagline} · {locationNamesLabel()}
         </div>
       </div>
     ),

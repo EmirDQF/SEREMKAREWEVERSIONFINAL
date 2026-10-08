@@ -9,7 +9,7 @@ import { WhatsAppFloat } from "@/components/shared/WhatsAppFloat";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { site } from "@/data/site";
 import { DEFAULT_DESCRIPTION } from "@/lib/seo";
-import { clinicSchema } from "@/lib/schema";
+import { organizationSchema } from "@/lib/schema";
 import "./globals.css";
 
 const inter = Inter({
@@ -25,7 +25,7 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const DEFAULT_TITLE = `Reumatólogo en Lima (San Borja) | ${site.name}`;
+const DEFAULT_TITLE = `Reumatólogo en Lima Norte y Callao | ${site.name}`;
 
 /** Deben coincidir con THEME_STORAGE_KEY (lib/theme.ts) y MOTION_STORAGE_KEY (lib/motion-preference.ts). */
 const THEME_STORAGE_KEY = "sermekare-theme";
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   applicationName: site.name,
   keywords: [
     "reumatólogo en Lima",
-    "reumatólogo San Borja",
+    "reumatólogo Lima Norte",
     "infiltración ecoguiada Lima",
     "tratamiento artritis reumatoide Lima",
     "viscosuplementación rodilla Lima",
@@ -85,7 +85,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </noscript>
       </head>
       <body className="min-h-dvh overflow-x-clip">
-        <JsonLd data={clinicSchema()} />
+        <JsonLd data={organizationSchema()} />
         <Providers>
           <SiteHeader />
           <main id="contenido" tabIndex={-1} className="focus:outline-none">

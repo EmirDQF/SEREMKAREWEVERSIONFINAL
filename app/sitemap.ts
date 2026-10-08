@@ -33,6 +33,8 @@ const ROUTES: readonly Route[] = [
   ...blogPosts.map((post) => ({ path: `/blog/${post.slug}`, priority: 0.6, changeFrequency: MONTHLY })),
   { path: "/testimonios", priority: 0.6, changeFrequency: MONTHLY },
   { path: "/preguntas-frecuentes", priority: 0.6, changeFrequency: MONTHLY },
+  { path: "/sedes", priority: 0.8, changeFrequency: MONTHLY },
+  ...site.locations.map((location) => ({ path: `/sedes/${location.id}`, priority: 0.8, changeFrequency: MONTHLY })),
   { path: "/contacto", priority: 0.7, changeFrequency: YEARLY },
   { path: "/libro-de-reclamaciones", priority: 0.3, changeFrequency: YEARLY },
   { path: "/politica-de-privacidad", priority: 0.2, changeFrequency: YEARLY },

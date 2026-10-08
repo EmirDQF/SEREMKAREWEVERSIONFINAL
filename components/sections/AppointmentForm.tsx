@@ -12,7 +12,7 @@ import { StepPatient } from "@/components/booking/StepPatient";
 import { STEP_MIN_HEIGHT, StepSkeleton, type StepProps } from "@/components/booking/ui";
 import { useBookingWizard } from "@/components/booking/useBookingWizard";
 import { site } from "@/data/site";
-import { EMERGENCY } from "@/data/teleconsult";
+import { EMERGENCY, TELECONSULT_HOURS_LABEL } from "@/data/teleconsult";
 import { useOpenStatus } from "@/lib/use-open-status";
 import { cn } from "@/lib/utils";
 
@@ -52,7 +52,7 @@ function BookingIntro() {
         <li className="flex gap-3">
           <Clock aria-hidden strokeWidth={1.75} className="mt-0.5 size-6 shrink-0 text-primary" />
           <span>
-            <strong className="block font-display text-heading">{site.hours.label}</strong>
+            <strong className="block font-display text-heading">{TELECONSULT_HOURS_LABEL}</strong>
             <span className="flex items-center gap-2 text-muted" aria-live="polite">
               {status ? <span aria-hidden className={status.isOpen ? "online-dot" : "offline-dot"} /> : null}
               {status ? status.label : "Hora de Lima"}
@@ -129,8 +129,7 @@ function CurrentStep({ step, props, onEdit }: { step: BookingStep; props: StepPr
 
 /** Agendador de teleconsulta en 3 pasos, sin backend: arma el mensaje y abre WhatsApp. */
 export function AppointmentForm() {
-  const wizard = useBookingWizard();
-  const { step, draft, errors, ids, setDraft, goTo } = wizard;
+  const { step, draft, errors, ids, setDraft, goTo, sentMessage, reset, submit, next, headingRef } = useBookingWizard();
   const stepProps: StepProps = { draft, errors, ids, onChange: setDraft };
 
   return (
@@ -138,13 +137,13 @@ export function AppointmentForm() {
       <div className="container-page grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
         <BookingIntro />
         <div className="rounded-[2rem] border border-line bg-card-solid p-6 shadow-lift sm:p-8">
-          {wizard.sentMessage ? (
-            <BookingSuccess message={wizard.sentMessage} onReset={wizard.reset} />
+          {sentMessage ? (
+            <BookingSuccess message={sentMessage} onReset={reset} />
           ) : (
-            <form onSubmit={wizard.submit} noValidate className="space-y-7">
+            <form onSubmit={submit} noValidate className="space-y-7">
               <BookingProgress step={step} />
               <div>
-                <h3 ref={wizard.headingRef} tabIndex={-1} className="text-h3 focus:outline-none focus-visible:outline-3">
+                <h3 ref={headingRef} tabIndex={-1} className="text-h3 focus:outline-none focus-visible:outline-3">
                   {STEP_COPY[step].title}
                 </h3>
                 <p className="mt-1 text-muted">{STEP_COPY[step].why}</p>
@@ -152,7 +151,7 @@ export function AppointmentForm() {
               <div className={STEP_MIN_HEIGHT}>
                 <CurrentStep step={step} props={stepProps} onEdit={goTo} />
               </div>
-              <StepNav step={step} onBack={() => goTo((step - 1) as BookingStep)} onNext={wizard.next} />
+              <StepNav step={step} onBack={() => goTo((step - 1) as BookingStep)} onNext={next} />
               <p className="flex items-start gap-2 border-t border-line pt-4 text-sm text-muted">
                 <ShieldAlert aria-hidden strokeWidth={1.75} className="mt-0.5 size-4 shrink-0 text-alert" />
                 <span>

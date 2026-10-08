@@ -1,4 +1,36 @@
-import type { Modality, RedFlag, SinceId } from "@/types/medical";
+import type { Modality, RedFlag, SinceId, TeleconsultHours } from "@/types/medical";
+
+const MINUTES_PER_HOUR = 60;
+
+/**
+ * Horario real de la teleconsulta. CONFIRMAR: el index.html de SEREMKAREWEB lo deja como
+ * [HORARIO_TELECONSULTA]. Mientras sea null, la UI muestra «Horario por confirmar».
+ */
+export const TELECONSULT_HOURS = null as TeleconsultHours | null;
+
+/**
+ * Horario simulado SOLO para el modo demo (agenda sin Cal.com). No es un dato real:
+ * toda pantalla que lo use muestra la etiqueta «demo».
+ */
+export const DEMO_TELECONSULT_HOURS: TeleconsultHours = {
+  days: [1, 2, 3, 4, 5],
+  opensAt: 9 * MINUTES_PER_HOUR,
+  closesAt: 22 * MINUTES_PER_HOUR,
+  slotMinutes: 30,
+  minLeadMinutes: 60,
+  timeZone: "America/Lima",
+  label: "Horario de demostración",
+  shortLabel: "Horario demo",
+  closedLabel: "Horario por confirmar",
+  confirmed: false,
+};
+
+/** Horario con el que se calculan los turnos: el real si existe; si no, el de demostración. */
+export const teleconsultSchedule: TeleconsultHours = TELECONSULT_HOURS ?? DEMO_TELECONSULT_HOURS;
+export const isDemoSchedule = TELECONSULT_HOURS === null;
+
+/** Texto público del horario: nunca muestra el horario demo como si fuera real. */
+export const TELECONSULT_HOURS_LABEL = TELECONSULT_HOURS?.label ?? "Horario por confirmar";
 
 export const MODALITY_LABEL: Readonly<Record<Modality, string>> = {
   videollamada: "Videollamada",

@@ -1,5 +1,6 @@
 import { site } from "@/data/site";
-import type { FAQItem } from "@/types/medical";
+import { primaryLocation, primaryWhatsAppLine } from "@/lib/locations";
+import type { ClinicLocation, FAQItem, OpeningHours } from "@/types/medical";
 
 type JsonLdObject = Record<string, unknown>;
 
@@ -8,40 +9,88 @@ const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frid
 const toTime = (minutes: number) =>
   `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
 
-/**
- * MedicalClinic. No incluye aggregateRating a propósito: Google exige reseñas reales
- * y verificables; agregarlo cuando existan reseñas de pacientes reales.
- */
-export function clinicSchema(): JsonLdObject {
+function postalAddress(location: ClinicLocation): JsonLdObject {
   return {
-    "@context": "https://schema.org",
-    "@type": "MedicalClinic",
-    "@id": `${site.url}/#clinic`,
-    name: `${site.name} — ${site.legalTagline}`,
-    url: site.url,
-    logo: `${site.url}/icon.svg`,
-    image: `${site.url}/opengraph-image`,
-    telephone: site.phone.tel,
-    email: site.email,
-    slogan: site.slogan,
-    medicalSpecialty: ["Rheumatologic", "PhysicalTherapy"],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: site.address.street,
-      addressLocality: site.address.district,
-      addressRegion: site.address.city,
-      addressCountry: "PE",
-    },
+    "@type": "PostalAddress",
+    streetAddress: location.street,
+    addressLocality: location.district,
+    addressRegion: location.region,
+    addressCountry: "PE",
+  };
+}
+
+/** Solo se publica el horario confirmado: un horario falso en Google es peor que ninguno. */
+function openingHours(hours: OpeningHours): JsonLdObject {
+  if (!hours.confirmed) return {};
+  return {
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
-        dayOfWeek: site.hours.days.map((d) => DAY_NAMES[d]),
-        opens: toTime(site.hours.opensAt),
-        closes: toTime(site.hours.closesAt),
+        dayOfWeek: hours.days.map((d) => DAY_NAMES[d]),
+        opens: toTime(hours.opensAt),
+        closes: toTime(hours.closesAt),
       },
     ],
-    availableService: { "@type": "MedicalTherapy", name: "Teleconsulta" },
+  };
+}
+
+/** @id de la empresa (KARE SAC): la usan todos los nodos que la referencian. */
+export const ORGANIZATION_ID = `${site.url}/#organization`;
+const ORGANIZATION_REF = { "@id": ORGANIZATION_ID } as const;
+
+/** @id del MedicalClinic de una sede: vive en su propia página (/sedes/<slug>). */
+export const locationClinicId = (location: ClinicLocation) => `${site.url}/sedes/${location.id}#clinic`;
+
+const locationRefs = (locations: readonly ClinicLocation[]) => locations.map((location) => ({ "@id": locationClinicId(location) }));
+
+/**
+ * MedicalOrganization (la empresa). La dirección y el horario van en cada sede, no aquí.
+ * No incluye aggregateRating a propósito: Google exige reseñas reales y verificables;
+ * agregarlo cuando existan reseñas de pacientes reales.
+ */
+export function organizationSchema(): JsonLdObject {
+  return {
+    "@context": "https://schema.org",
+    "@type": "MedicalOrganization",
+    "@id": ORGANIZATION_ID,
+    name: `${site.name} — ${site.legalTagline}`,
+    legalName: site.legalName,
+    ...(site.taxId ? { taxID: site.taxId } : {}),
+    url: site.url,
+    logo: `${site.url}/icon.svg`,
+    image: `${site.url}/opengraph-image`,
+    telephone: `+${primaryWhatsAppLine().number}`,
+    email: site.email,
+    slogan: site.slogan,
+    medicalSpecialty: ["Rheumatologic", "PhysicalTherapy"],
+    subOrganization: locationRefs(site.locations),
     sameAs: site.socials.map((s) => s.href),
+  };
+}
+
+/** Intro de la sede, con la referencia del hospital al inicio si la intro no la menciona ya. */
+function locationDescription(location: ClinicLocation): string {
+  const { reference, intro } = location;
+  return reference && !intro.includes(reference) ? `${reference}. ${intro}` : intro;
+}
+
+/** MedicalClinic de una sede, enlazada a la organización. Sin geo hasta tener coordenadas confirmadas. */
+export function locationClinicSchema(location: ClinicLocation): JsonLdObject {
+  const path = `/sedes/${location.id}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "MedicalClinic",
+    "@id": locationClinicId(location),
+    name: `${site.name} — Sede ${location.name}`,
+    url: `${site.url}${path}`,
+    parentOrganization: ORGANIZATION_REF,
+    description: locationDescription(location),
+    telephone: `+${location.whatsapp.number}`,
+    address: postalAddress(location),
+    hasMap: location.mapsUrl,
+    ...openingHours(location.hours),
+    areaServed: location.nearbyDistricts.map((name) => ({ "@type": "AdministrativeArea", name })),
+    availableService: { "@type": "DiagnosticProcedure", name: "Densitometría ósea (DXA)" },
   };
 }
 
@@ -84,6 +133,8 @@ interface ProcedureInfo {
   howPerformed: string;
   preparation: string;
   followup: string;
+  /** Sedes donde se hace; si se omite, apunta a la organización. */
+  availableAt?: readonly ClinicLocation[];
 }
 
 type ProcedureType = "DiagnosticProcedure" | "TherapeuticProcedure";
@@ -103,7 +154,7 @@ export function procedureSchema(type: ProcedureType, info: ProcedureInfo): JsonL
     howPerformed: info.howPerformed,
     preparation: info.preparation,
     followup: info.followup,
-    availableAt: { "@id": `${site.url}/#clinic` },
+    availableAt: info.availableAt ? locationRefs(info.availableAt) : ORGANIZATION_REF,
   };
 }
 
@@ -130,7 +181,7 @@ export function medicalServiceSchema(info: ServiceInfo): JsonLdObject {
     url: `${site.url}${info.path}`,
     serviceType: info.name,
     areaServed: { "@type": "City", name: "Lima" },
-    provider: { "@id": `${site.url}/#clinic` },
+    provider: ORGANIZATION_REF,
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: info.name,
@@ -159,7 +210,7 @@ export function medicalConditionSchema(info: ConditionInfo): JsonLdObject {
       description: info.description,
       signOrSymptom: info.symptoms.map((symptom) => ({ "@type": "MedicalSignOrSymptom", name: symptom })),
     },
-    publisher: { "@id": `${site.url}/#clinic` },
+    publisher: ORGANIZATION_REF,
   };
 }
 
@@ -181,14 +232,8 @@ export function physicianSchema(info: PhysicianInfo): JsonLdObject {
     medicalSpecialty: "Rheumatologic",
     description: info.specialty,
     knowsAbout: info.knowsAbout,
-    worksFor: { "@id": `${site.url}/#clinic` },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: site.address.street,
-      addressLocality: site.address.district,
-      addressRegion: site.address.city,
-      addressCountry: "PE",
-    },
+    worksFor: ORGANIZATION_REF,
+    address: postalAddress(primaryLocation()),
   };
 }
 
@@ -213,6 +258,6 @@ export function blogPostingSchema(info: ArticleInfo): JsonLdObject {
     datePublished: info.datePublished,
     inLanguage: "es-PE",
     author: { "@type": "Person", name: info.authorName, url: `${site.url}${info.authorPath}` },
-    publisher: { "@id": `${site.url}/#clinic` },
+    publisher: ORGANIZATION_REF,
   };
 }

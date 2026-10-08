@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/tratamientos/[slu
   const { slug } = await params;
   const treatment = findTreatment(slug);
   if (!treatment) return {};
-  const title = `${treatment.name} en Lima (San Borja) | ${site.name}`;
+  const title = `${treatment.name} en Lima Norte y Callao | ${site.name}`;
   return {
     ...buildMetadata({ title, description: `${treatment.summary} Indicado para: ${treatment.indicatedFor}`, path: treatmentPath(slug) }),
     title: { absolute: title },

@@ -9,9 +9,10 @@ import {
   slotStarts,
   weekdayOfISO,
 } from "@/lib/slots";
-import type { OpeningHours } from "@/types/medical";
+import type { TeleconsultHours } from "@/types/medical";
 
-const hours: OpeningHours = {
+const hours: TeleconsultHours = {
+  confirmed: true,
   days: [1, 2, 3, 4, 5],
   opensAt: 19 * 60,
   closesAt: 22 * 60,

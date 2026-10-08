@@ -20,7 +20,7 @@ import {
 } from "@/lib/booking";
 import { doctors } from "@/data/doctors";
 import { bodyZones, complaintFor, complaints, getComplaint } from "@/data/bodyZones";
-import { site } from "@/data/site";
+import { teleconsultSchedule } from "@/data/teleconsult";
 import { slotStarts } from "@/lib/slots";
 import type { BookingDraft, ComplaintId, Doctor, Modality, Weekday } from "@/types/medical";
 
@@ -205,7 +205,7 @@ describe("buildTeleconsultMessage", () => {
 });
 
 describe("real roster (data/doctors.ts)", () => {
-  const weekdays = site.hours.days;
+  const weekdays = teleconsultSchedule.days;
   const modalities: readonly Modality[] = ["videollamada", "llamada"];
 
   it("covers every complaint, every business day and both modalities", () => {
@@ -224,10 +224,10 @@ describe("real roster (data/doctors.ts)", () => {
   it("keeps every doctor window inside the teleconsult hours, from 7 p.m.", () => {
     for (const doctor of doctors) {
       for (const block of doctor.schedule) {
-        expect(block.from).toBeGreaterThanOrEqual(site.hours.opensAt);
-        expect(block.to).toBeLessThanOrEqual(site.hours.closesAt);
+        expect(block.from).toBeGreaterThanOrEqual(teleconsultSchedule.opensAt);
+        expect(block.to).toBeLessThanOrEqual(teleconsultSchedule.closesAt);
         expect(block.days.every((d) => weekdays.includes(d))).toBe(true);
-        expect(slotStarts(site.hours, block).length).toBeGreaterThan(0);
+        expect(slotStarts(teleconsultSchedule, block).length).toBeGreaterThan(0);
       }
     }
   });

@@ -8,7 +8,7 @@ import { Logo } from "@/components/layout/Logo";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { buttonVariants } from "@/components/ui/button";
 import { BOOKING_HREF, TRIAGE_HREF, primaryLinks } from "@/data/navigation";
-import { site } from "@/data/site";
+import { locationNamesLabel, primaryLocation, primaryWhatsAppLine } from "@/lib/locations";
 import { clinicWhatsApp } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
@@ -90,11 +90,11 @@ export function MobileMenu() {
                 >
                   <WhatsAppIcon /> WhatsApp
                 </a>
-                <a href={`tel:${site.phone.tel}`} className={buttonVariants({ variant: "outline" })}>
+                <a href={`tel:+${primaryWhatsAppLine().number}`} className={buttonVariants({ variant: "outline" })}>
                   <Phone aria-hidden strokeWidth={1.75} /> Llamar
                 </a>
               </div>
-              <p className="pt-2 text-center text-sm text-muted">{site.hours.label}</p>
+              <p className="pt-2 text-center text-sm text-muted">{primaryLocation().hours.label} · {locationNamesLabel()}</p>
             </div>
           </nav>
         </DialogPrimitive.Content>

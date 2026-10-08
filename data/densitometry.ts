@@ -153,7 +153,7 @@ export const densitometry: DensitometryContent = {
   ],
   cta: {
     label: "Agendar densitometría",
-    message: "Hola SERMEKARE, quisiera agendar una densitometría ósea.",
+    message: "Hola SERMEKARE, quisiera agendar una densitometría ósea de columna y cadera.",
     support: "Densitometría y consulta en una sola visita",
   },
   disclaimer: "Esta información es orientativa y no reemplaza la evaluación de un especialista.",

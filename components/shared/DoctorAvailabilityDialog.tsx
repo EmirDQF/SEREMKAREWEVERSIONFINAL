@@ -8,7 +8,6 @@ import { buttonVariants, type ButtonVariant } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { describeBlock } from "@/lib/booking";
 import { clinicWhatsApp, messageForDoctor } from "@/lib/whatsapp";
-import { site } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 interface DoctorAvailabilityDialogProps {
@@ -58,7 +57,7 @@ export function DoctorAvailabilityDialog({ doctor, triggerClassName, triggerVari
         </ul>
 
         <p className="mt-5 text-[0.95rem] text-muted">
-          Teleconsulta de {site.hours.label.toLowerCase()} (hora de Lima). Te confirmamos el turno por WhatsApp.
+          Te confirmamos el horario exacto por WhatsApp. Atendemos con cita previa.
         </p>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">

@@ -10,7 +10,7 @@ import { site } from "@/data/site";
 import { breadcrumbSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 
-const TITLE = `Staff médico: reumatólogos en Lima (San Borja) | ${site.name}`;
+const TITLE = `Staff médico: reumatólogos en Lima Norte y Callao | ${site.name}`;
 const DESCRIPTION =
   "Conoce a nuestros reumatólogos y especialistas en salud articular: formación, enfoque clínico, horarios y cómo agendar con cada uno.";
 const CRUMBS = [

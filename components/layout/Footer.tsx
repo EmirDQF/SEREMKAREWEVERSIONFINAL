@@ -1,17 +1,19 @@
 import Link from "next/link";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { MotionToggle } from "@/components/layout/MotionToggle";
 import { FooterWaves } from "@/components/layout/FooterWaves";
 import { NewsletterForm } from "@/components/layout/NewsletterForm";
-import { ComplaintsBookIcon, SocialIcon } from "@/components/shared/BrandIcons";
+import { ComplaintsBookIcon, SocialIcon, WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { MedicalDisclaimer } from "@/components/shared/MedicalDisclaimer";
 import { doctors } from "@/data/doctors";
-import { legalLinks } from "@/data/navigation";
+import { LOCATIONS_PATH, legalLinks } from "@/data/navigation";
 import { servicePillars } from "@/data/services";
 import { site } from "@/data/site";
 import { DENSITOMETRY_PATH } from "@/data/densitometry";
 import { specialties } from "@/data/specialties";
+import { allWhatsAppLines, formatLocationAddress, locationNamesLabel, primaryLocation } from "@/lib/locations";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 const LINK = "inline-flex min-h-10 items-center text-slate-300 transition-colors hover:text-white";
 
@@ -47,7 +49,7 @@ export function Footer() {
         <div>
           <Logo tone="inverted" showTagline />
           <p className="mt-5 max-w-sm">
-            {site.legalTagline} en {site.address.district}, Lima. {site.slogan}: diagnóstico oportuno, tratamiento
+            {site.legalTagline} en {locationNamesLabel()}. {site.slogan}: diagnóstico oportuno, tratamiento
             moderno y un seguimiento cercano.
           </p>
           <ul className="mt-6 flex gap-2" aria-label="Redes sociales">
@@ -93,28 +95,45 @@ export function Footer() {
             ]}
           />
           <div>
-            <h2 className="font-display text-base font-bold text-white">Sede {site.address.district}</h2>
-            <ul className="mt-3 space-y-3">
-              <li className="flex gap-2.5">
-                <MapPin aria-hidden strokeWidth={1.75} className="mt-1 size-5 shrink-0 text-teal" />
-                <a href={site.address.mapsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white">
-                  {site.address.street}, {site.address.district}, {site.address.city}
-                </a>
-              </li>
+            <h2 className="font-display text-base font-bold text-white">Nuestras sedes</h2>
+            <ul className="mt-3 space-y-4">
+              {site.locations.map((location) => (
+                <li key={location.id} className="flex gap-2.5">
+                  <MapPin aria-hidden strokeWidth={1.75} className="mt-1 size-5 shrink-0 text-teal" />
+                  <span>
+                    <Link href={`${LOCATIONS_PATH}/${location.id}`} className="font-semibold text-white hover:text-teal">
+                      {location.name}
+                    </Link>
+                    <a href={location.mapsUrl} target="_blank" rel="noopener noreferrer" className="block hover:text-white">
+                      {formatLocationAddress(location)}
+                      {location.reference ? ` · ${location.reference}` : null}
+                      <span className="sr-only"> (Google Maps, pestaña nueva)</span>
+                    </a>
+                  </span>
+                </li>
+              ))}
               <li className="flex gap-2.5">
                 <Clock aria-hidden strokeWidth={1.75} className="mt-1 size-5 shrink-0 text-teal" />
                 <span>
-                  {site.hours.label}
+                  {primaryLocation().hours.label}
                   <br />
-                  {site.hours.closedLabel}
+                  {primaryLocation().hours.closedLabel}
                 </span>
               </li>
-              <li className="flex gap-2.5">
-                <Phone aria-hidden strokeWidth={1.75} className="mt-1 size-5 shrink-0 text-teal" />
-                <a href={`tel:${site.phone.tel}`} className="hover:text-white">
-                  {site.phone.display}
-                </a>
-              </li>
+            </ul>
+            <h2 className="mt-8 font-display text-base font-bold text-white">WhatsApp</h2>
+            <ul className="mt-3 space-y-1">
+              {allWhatsAppLines().map((line) => (
+                <li key={line.number}>
+                  <a href={buildWhatsAppLink(line.number, site.defaultWhatsAppMessage)} target="_blank" rel="noopener noreferrer" className={LINK}>
+                    <WhatsAppIcon className="mr-2.5 size-5 shrink-0 text-teal" />
+                    {line.display}
+                    <span className="sr-only"> (abre WhatsApp en otra pestaña)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-3">
               <li className="flex gap-2.5">
                 <Mail aria-hidden strokeWidth={1.75} className="mt-1 size-5 shrink-0 text-teal" />
                 <a href={`mailto:${site.email}`} className="break-all hover:text-white">

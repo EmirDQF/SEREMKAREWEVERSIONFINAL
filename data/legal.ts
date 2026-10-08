@@ -3,9 +3,9 @@
  * reales, y revisar los textos legales con asesoría legal antes de publicar.
  */
 export const legal = {
-  businessName: "SERMEKARE S.A.C. (razón social por confirmar)",
-  ruc: "00000000000",
-  fiscalAddress: "Av. Aviación 2450, San Borja, Lima",
+  businessName: "KARE SAC", // De la tarjeta de presentación; CONFIRMAR con la ficha RUC
+  ruc: "00000000000", // PROVISIONAL: pedir el RUC a la empresa
+  fiscalAddress: "Av. Alfredo Mendiola 5875, Urb. Villasol, Los Olivos, Lima", // CONFIRMAR: domicilio fiscal (puede diferir de la sede)
   complaintsEmail: "reclamaciones@sermekare.com",
   /** Plazo máximo de respuesta del Libro de Reclamaciones (días hábiles). */
   responseDays: 15,

@@ -80,7 +80,7 @@ describe("checklistOutcome", () => {
 describe("densitometry CTA", () => {
   it("opens WhatsApp with the exact booking message", () => {
     const url = decodeURIComponent(clinicWhatsApp(densitometry.cta.message));
-    expect(url).toContain("Hola SERMEKARE, quisiera agendar una densitometría ósea.");
+    expect(url).toContain("Hola SERMEKARE, quisiera agendar una densitometría ósea de columna y cadera.");
   });
 
   it("never gives a diagnosis or a risk score in the checklist copy", () => {

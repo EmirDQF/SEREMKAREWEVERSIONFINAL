@@ -1,7 +1,7 @@
 import { getComplaint } from "@/data/bodyZones";
 import { doctors as defaultDoctors } from "@/data/doctors";
 import { site } from "@/data/site";
-import { EMERGENCY, MODALITY_LABEL, SINCE_OPTIONS } from "@/data/teleconsult";
+import { EMERGENCY, MODALITY_LABEL, SINCE_OPTIONS, teleconsultSchedule } from "@/data/teleconsult";
 import { describeDays, formatTime } from "@/lib/schedule";
 import { availableSlots, formatSlot, weekdayOfISO } from "@/lib/slots";
 import type {
@@ -13,6 +13,7 @@ import type {
   Doctor,
   DoctorSchedule,
   Modality,
+  TeleconsultHours,
 } from "@/types/medical";
 
 export const AGE_LIMITS = { min: 0, max: 120 } as const;
@@ -72,7 +73,7 @@ export function doctorsFor(complaint: ComplaintId, modality: Modality, roster: R
 }
 
 /** Turnos libres de un doctor ese día en la modalidad elegida. */
-export function doctorSlots(doctor: Doctor, iso: string, modality: Modality, now: Date, hours = site.hours): number[] {
+export function doctorSlots(doctor: Doctor, iso: string, modality: Modality, now: Date, hours: TeleconsultHours = teleconsultSchedule): number[] {
   const weekday = weekdayOfISO(iso);
   const blocks = doctor.schedule.filter((b) => b.days.includes(weekday) && b.modalities.includes(modality));
   const starts = blocks.flatMap((block) => availableSlots(hours, iso, now, block));

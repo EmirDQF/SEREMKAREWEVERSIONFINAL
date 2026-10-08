@@ -61,7 +61,7 @@ export default function TestimonialsPage() {
       <CtaBand
         title="Tu historia también puede cambiar"
         text="Da el primer paso: agenda una evaluación con nuestros especialistas."
-        message={site.whatsapp.defaultMessage}
+        message={site.defaultWhatsAppMessage}
       />
     </>
   );

@@ -10,16 +10,64 @@ export interface OpeningHours {
   opensAt: number;
   /** Fin de la atención, en minutos desde medianoche (el último turno termina a esta hora). */
   closesAt: number;
+  timeZone: string;
+  /** "Lunes a viernes · 7:00 p.m. – 10:00 p.m." */
+  label: string;
+  closedLabel: string;
+  /** Solo si es true se muestra «Abierto ahora / Cerrado» y se publica en el JSON-LD. */
+  confirmed: boolean;
+}
+
+/** Horario de teleconsulta: además de la franja, la duración de cada turno. */
+export interface TeleconsultHours extends OpeningHours {
   /** Duración de cada turno de teleconsulta, en minutos. */
   slotMinutes: number;
   /** Anticipación mínima para reservar un turno de hoy, en minutos. */
   minLeadMinutes: number;
-  timeZone: string;
-  /** "Lunes a viernes · 7:00 p.m. – 10:00 p.m." */
-  label: string;
   /** "Lun–Vie desde 7:00 p.m." (badges y espacios reducidos) */
   shortLabel: string;
-  closedLabel: string;
+}
+
+export type LocationId = "los-olivos" | "callao" | "puente-piedra";
+
+/** Sede elegida en el formulario: una sede concreta o «la más cercana / no sé». */
+export type LocationChoice = LocationId | "cualquiera";
+
+export interface WhatsAppLine {
+  label: string;
+  /** Como se muestra: "+51 994 931 540". */
+  display: string;
+  /** Para wa.me y tel:, solo dígitos con código de país: "51994931540". */
+  number: string;
+}
+
+export interface ClinicLocation {
+  id: LocationId;
+  name: string;
+  /** Cómo se nombra el lugar en una frase: «en el Callao». Por defecto, el nombre. */
+  placeName?: string;
+  street: string;
+  district: string;
+  city: string;
+  region: string;
+  /** Referencia para llegar (p. ej. «Frente al Hospital …»). Es lo que más ayuda al paciente. */
+  reference?: string;
+  /** Versión corta de la referencia para mensajes de WhatsApp. */
+  shortReference?: string;
+  whatsapp: WhatsAppLine;
+  hours: OpeningHours;
+  mapsUrl: string;
+  mapsEmbedUrl: string;
+  /** Solo con coordenadas confirmadas. */
+  geo?: { lat: number; lng: number };
+  howToArrive: readonly string[];
+  /** Presentación propia de la sede (página /sedes/[slug]). */
+  intro: string;
+  /** Distritos cercanos que atiende la sede (SEO local y areaServed). */
+  nearbyDistricts: readonly string[];
+  /** Estudios disponibles en esta sede. */
+  services: readonly string[];
+  provisional: boolean;
 }
 
 /** Franja horaria en minutos desde medianoche: [from, to). */
@@ -50,28 +98,25 @@ export interface TrustStat {
 
 export interface SiteConfig {
   name: string;
+  /** Razón social que figura en la tarjeta y en los documentos legales. */
+  legalName: string;
+  /** RUC (obligatorio para el Libro de Reclamaciones). */
+  taxId?: string;
   legalTagline: string;
   slogan: string;
   domain: string;
   url: string;
   /** País donde se atiende por teleconsulta. */
   serviceArea: string;
-  /** Mensajes ancla de la plataforma 100 % online. */
+  /** Mensajes ancla de la teleconsulta. */
   anchors: { online: string; prescription: string };
-  /** @deprecated Sede física: se elimina al reencuadrar secciones (fase D). */
-  address: {
-    street: string;
-    district: string;
-    city: string;
-    country: string;
-    mapsUrl: string;
-    mapsEmbedUrl: string;
-    howToArrive: readonly string[];
-  };
-  phone: { display: string; tel: string };
-  whatsapp: { display: string; number: string; defaultMessage: string };
+  timeZone: string;
+  locations: readonly ClinicLocation[];
+  primaryLocationId: LocationId;
+  /** Las líneas de WhatsApp de la empresa; la primera es la principal. */
+  whatsappLines: readonly WhatsAppLine[];
+  defaultWhatsAppMessage: string;
   email: string;
-  hours: OpeningHours;
   socials: readonly SocialLink[];
   stats: {
     consultations: TrustStat;
@@ -225,6 +270,8 @@ export type AppointmentFor = "mi" | "familiar";
 /** @deprecated Formulario de una sola pantalla; lo reemplaza BookingDraft (asistente de 3 pasos, fase C). */
 export interface Appointment {
   modality: Modality;
+  /** Obligatoria en la modalidad presencial. */
+  location?: LocationChoice;
   forWhom: AppointmentFor;
   specialty: string;
   doctorName?: string;

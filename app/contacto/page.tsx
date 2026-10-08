@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
-import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react";
+import { Mail, Navigation } from "lucide-react";
 import { PageHero } from "@/components/pages/PageHero";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { JsonLd } from "@/components/shared/JsonLd";
+import { LocationCard } from "@/components/shared/LocationCard";
+import { LocationWhatsAppPicker } from "@/components/shared/LocationWhatsAppPicker";
+import { MapFacade } from "@/components/shared/MapFacade";
 import { RevealGroup, RevealItem } from "@/components/shared/Reveal";
 import { TiltCard } from "@/components/shared/TiltCard";
 import { buttonVariants } from "@/components/ui/button";
 import { BOOKING_HREF } from "@/data/navigation";
 import { site } from "@/data/site";
-import { breadcrumbSchema } from "@/lib/schema";
+import { allWhatsAppLines, locationNamesLabel, primaryLocation } from "@/lib/locations";
+import { ORGANIZATION_ID, breadcrumbSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
-import { clinicWhatsApp } from "@/lib/whatsapp";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
 
-const TITLE = `Contacto y cómo llegar | ${site.name} San Borja`;
-const DESCRIPTION = `Escríbenos por WhatsApp, llámanos o visítanos en ${site.address.street}, ${site.address.district}. ${site.hours.label}.`;
+const TITLE = `Contacto y sedes en ${locationNamesLabel()} | ${site.name}`;
+const DESCRIPTION = `Escríbenos por WhatsApp o visítanos en nuestras sedes de ${locationNamesLabel()}. ${primaryLocation().hours.label}.`;
 const CRUMBS = [
   { label: "Inicio", href: "/" },
   { label: "Contacto", href: "/contacto" },
@@ -24,26 +28,42 @@ export const metadata: Metadata = {
   title: { absolute: TITLE },
 };
 
-const CHANNELS = [
-  {
-    icon: WhatsAppIcon,
-    title: "WhatsApp",
-    value: site.whatsapp.display,
-    href: clinicWhatsApp(),
-    external: true,
-    note: "La forma más rápida de agendar.",
-  },
-  { icon: Phone, title: "Teléfono", value: site.phone.display, href: `tel:${site.phone.tel}`, external: false, note: site.hours.label },
-  { icon: Mail, title: "Correo", value: site.email, href: `mailto:${site.email}`, external: false, note: "Te respondemos en horario de atención." },
-  {
-    icon: MapPin,
-    title: "Sede",
-    value: `${site.address.street}, ${site.address.district}`,
-    href: site.address.mapsUrl,
-    external: true,
-    note: site.address.city,
-  },
-] as const;
+const CARD = "flex h-full flex-col rounded-[1.75rem] border border-line bg-card-solid p-6 shadow-soft transition-colors hover:border-primary";
+const ICON_BADGE = "grid size-12 place-items-center rounded-2xl bg-teal-tint text-primary [&_svg]:size-6";
+
+function ChannelCards() {
+  return (
+    <RevealGroup as="ul" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {allWhatsAppLines().map((line) => (
+        <RevealItem as="li" key={line.number}>
+          <TiltCard className="h-full rounded-[1.75rem]">
+            <a href={buildWhatsAppLink(line.number, site.defaultWhatsAppMessage)} target="_blank" rel="noopener noreferrer" className={CARD}>
+              <span className={ICON_BADGE}>
+                <WhatsAppIcon />
+              </span>
+              <span className="mt-4 font-display font-semibold text-heading">WhatsApp · {line.label}</span>
+              <span className="mt-1 text-lg font-semibold text-primary">{line.display}</span>
+              <span className="mt-1 text-sm text-muted">La forma más rápida de agendar.</span>
+              <span className="sr-only"> (abre WhatsApp en otra pestaña)</span>
+            </a>
+          </TiltCard>
+        </RevealItem>
+      ))}
+      <RevealItem as="li">
+        <TiltCard className="h-full rounded-[1.75rem]">
+          <a href={`mailto:${site.email}`} className={CARD}>
+            <span className={ICON_BADGE}>
+              <Mail aria-hidden />
+            </span>
+            <span className="mt-4 font-display font-semibold text-heading">Correo</span>
+            <span className="mt-1 break-words text-lg font-semibold text-primary">{site.email}</span>
+            <span className="mt-1 text-sm text-muted">Te respondemos en horario de atención.</span>
+          </a>
+        </TiltCard>
+      </RevealItem>
+    </RevealGroup>
+  );
+}
 
 export default function ContactPage() {
   return (
@@ -53,7 +73,7 @@ export default function ContactPage() {
           "@context": "https://schema.org",
           "@type": "ContactPage",
           url: `${site.url}/contacto`,
-          mainEntity: { "@id": `${site.url}/#clinic` },
+          mainEntity: { "@id": ORGANIZATION_ID },
         }}
       />
       <JsonLd data={breadcrumbSchema(CRUMBS)} />
@@ -63,12 +83,12 @@ export default function ContactPage() {
         eyebrow="Contacto"
         title="Estamos para ayudarte"
         accent="ayudarte"
-        lead={`Escríbenos, llámanos o visítanos en ${site.address.district}. Te respondemos en horario de atención.`}
+        lead={`Escríbenos por WhatsApp o visítanos en ${locationNamesLabel()}. ${primaryLocation().hours.label}.`}
         actions={
           <>
-            <a href={clinicWhatsApp()} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "whatsapp", size: "lg" })}>
+            <LocationWhatsAppPicker triggerClassName={buttonVariants({ variant: "whatsapp", size: "lg" })}>
               <WhatsAppIcon /> Escribir por WhatsApp
-            </a>
+            </LocationWhatsAppPicker>
             <a href={BOOKING_HREF} className={buttonVariants({ variant: "outline", size: "lg" })}>
               Agendar con el formulario
             </a>
@@ -78,59 +98,30 @@ export default function ContactPage() {
 
       <section aria-label="Canales de contacto" className="pb-12">
         <div className="container-page">
-          <RevealGroup as="ul" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {CHANNELS.map(({ icon: ChannelIcon, title, value, href, external, note }) => (
-              <RevealItem as="li" key={title}>
-                <TiltCard className="h-full rounded-[1.75rem]">
-                  <a
-                    href={href}
-                    {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                    className="flex h-full flex-col rounded-[1.75rem] border border-line bg-card-solid p-6 shadow-soft transition-colors hover:border-primary"
-                  >
-                    <span className="grid size-12 place-items-center rounded-2xl bg-teal-tint text-primary [&_svg]:size-6">
-                      <ChannelIcon aria-hidden />
-                    </span>
-                    <span className="mt-4 font-display font-semibold text-heading">{title}</span>
-                    <span className="mt-1 break-words text-lg font-semibold text-primary">{value}</span>
-                    <span className="mt-1 text-sm text-muted">{note}</span>
-                  </a>
-                </TiltCard>
-              </RevealItem>
-            ))}
-          </RevealGroup>
+          <ChannelCards />
         </div>
       </section>
 
-      <section aria-labelledby="llegar-title" className="pb-24">
-        <div className="container-page grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-          <div className="min-h-80 overflow-hidden rounded-[2rem] border border-line shadow-soft">
-            <iframe
-              src={site.address.mapsEmbedUrl}
-              title={`Mapa de ${site.name}, ${site.address.street}, ${site.address.district}`}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="size-full min-h-80"
-            />
-          </div>
-          <div className="rounded-[2rem] border border-line bg-card-solid p-6 shadow-soft sm:p-8">
-            <h2 id="llegar-title" className="text-h3">
-              Cómo llegar
-            </h2>
-            <ul className="mt-4 space-y-3">
-              {site.address.howToArrive.map((tip) => (
-                <li key={tip} className="flex gap-3 text-fg">
-                  <Navigation aria-hidden strokeWidth={1.75} className="mt-1 size-5 shrink-0 text-primary" /> {tip}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 rounded-2xl bg-bg-alt p-4">
-              <p className="flex items-center gap-2 font-display font-semibold text-heading">
-                <Clock aria-hidden strokeWidth={1.75} className="size-5 text-primary" /> Horario
-              </p>
-              <p className="mt-1 text-muted">{site.hours.label}</p>
-              <p className="text-muted">{site.hours.closedLabel}</p>
+      <section aria-labelledby="sedes-title" className="pb-24">
+        <div className="container-page space-y-10">
+          <h2 id="sedes-title" className="text-h2">
+            Nuestras sedes
+          </h2>
+          {site.locations.map((location) => (
+            <div key={location.id} className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+              <MapFacade location={location} />
+              <div className="space-y-4">
+                <LocationCard location={location} className="h-auto" />
+                <ul className="space-y-2 px-2" aria-label={`Cómo llegar a la sede ${location.name}`}>
+                  {location.howToArrive.map((tip) => (
+                    <li key={tip} className="flex gap-3 text-fg">
+                      <Navigation aria-hidden strokeWidth={1.75} className="mt-1 size-5 shrink-0 text-primary" /> {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </section>
     </>

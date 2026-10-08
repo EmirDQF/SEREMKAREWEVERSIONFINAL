@@ -6,12 +6,10 @@ const hours: OpeningHours = {
   days: [1, 2, 3, 4, 5],
   opensAt: 19 * 60,
   closesAt: 22 * 60,
-  slotMinutes: 30,
-  minLeadMinutes: 30,
   timeZone: "America/Lima",
   label: "Lunes a viernes · 7:00 p.m. – 10:00 p.m.",
-  shortLabel: "Lun–Vie desde 7:00 p.m.",
   closedLabel: "Sábados y domingos sin atención",
+  confirmed: true,
 };
 
 // Lima es UTC-5 todo el año (sin horario de verano). 2026-10-05 es lunes.

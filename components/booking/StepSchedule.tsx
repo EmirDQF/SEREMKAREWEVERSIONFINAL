@@ -4,8 +4,7 @@ import { useMemo, useState } from "react";
 import { Clock, Phone, Video } from "lucide-react";
 import type { Doctor } from "@/types/medical";
 import { DoctorCardOption } from "@/components/shared/DoctorCard";
-import { site } from "@/data/site";
-import { MODALITY_HINT } from "@/data/teleconsult";
+import { MODALITY_HINT, teleconsultSchedule } from "@/data/teleconsult";
 import { describeBlock, doctorSlots, doctorsFor, withDoctor, withModality } from "@/lib/booking";
 import { describeDays, formatTime, todayISO } from "@/lib/schedule";
 import { dayChipLabel, nextBusinessDays } from "@/lib/slots";
@@ -22,7 +21,7 @@ function HoursBadge() {
   return (
     <p className="inline-flex flex-wrap items-center gap-2 rounded-full border border-video bg-video-tint px-4 py-2 font-display font-semibold text-video">
       <Clock aria-hidden strokeWidth={1.75} className="size-5" />
-      {describeDays(site.hours.days)} desde las {formatTime(site.hours.opensAt)}
+      {describeDays(teleconsultSchedule.days)} desde las {formatTime(teleconsultSchedule.opensAt)}
       <span className="font-sans text-sm font-normal">(hora de Lima)</span>
     </p>
   );
@@ -80,7 +79,7 @@ interface SlotPickerProps extends StepProps {
 }
 
 function SlotPicker({ draft, errors, ids, onChange, doctor, days, day, onDay, now }: SlotPickerProps) {
-  const today = todayISO(site.hours.timeZone, now);
+  const today = todayISO(teleconsultSchedule.timeZone, now);
   const slotsFor = (iso: string) => (doctor ? doctorSlots(doctor, iso, draft.modality, now) : []);
   const slots = day ? slotsFor(day) : [];
   return (
@@ -122,7 +121,7 @@ function SlotPicker({ draft, errors, ids, onChange, doctor, days, day, onDay, no
 export function StepSchedule(props: StepProps) {
   const { draft, onChange } = props;
   const [now] = useState(() => new Date());
-  const days = useMemo(() => nextBusinessDays(site.hours, DAYS_TO_SHOW, now), [now]);
+  const days = useMemo(() => nextBusinessDays(teleconsultSchedule, DAYS_TO_SHOW, now), [now]);
   const candidates = doctorsFor(draft.complaint ?? "general", draft.modality);
   const doctor = candidates.find((d) => d.slug === draft.doctorSlug) ?? null;
   const [day, setDay] = useState<string | null>(draft.slot?.date ?? null);

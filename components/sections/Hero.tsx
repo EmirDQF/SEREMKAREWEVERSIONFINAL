@@ -4,6 +4,7 @@ import { HeroVisual } from "@/components/sections/HeroVisual";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { buttonVariants } from "@/components/ui/button";
 import { site } from "@/data/site";
+import { locationNamesLabel } from "@/lib/locations";
 import { clinicWhatsApp } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +22,7 @@ export function Hero() {
         <div>
           <p className="inline-flex items-center gap-2 rounded-full border border-line bg-card-solid/70 px-4 py-2 text-sm font-semibold text-heading shadow-soft">
             <span aria-hidden className="size-2 rounded-full bg-teal" />
-            {site.legalTagline} · {site.address.district}
+            {site.legalTagline} · {locationNamesLabel()}
           </p>
           <div className="mt-6">
             <HeroHeadline id="hero-title" />
