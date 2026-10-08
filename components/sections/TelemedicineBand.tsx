@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { DoctorPortrait } from "@/components/shared/DoctorPortrait";
 import { Check, Mic, PhoneOff, Video } from "lucide-react";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { Reveal } from "@/components/shared/Reveal";
@@ -80,13 +81,7 @@ export function TelemedicineBand() {
                     </span>
                     <div className="absolute bottom-3 right-3 w-[30%] overflow-hidden rounded-xl border-2 border-white/80 shadow-lift">
                       <div className="relative aspect-[3/4]">
-                        <Image
-                          src={doctor.photo}
-                          alt={`Vista previa de ${doctor.name}`}
-                          fill
-                          sizes="150px"
-                          className="object-cover object-top"
-                        />
+                        <DoctorPortrait doctor={doctor} fill sizes="150px" alt={`Vista previa de ${doctor.name}`} />
                       </div>
                     </div>
                     <div aria-hidden className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">

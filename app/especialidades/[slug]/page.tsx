@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { DoctorPortrait } from "@/components/shared/DoctorPortrait";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AlertTriangle, ArrowRight, ArrowUpRight, Stethoscope, Users } from "lucide-react";
@@ -149,7 +149,7 @@ export default async function SpecialtyPage({ params }: PageProps<"/especialidad
                 href={`/staff/${doctor.slug}`}
                 className="group flex items-center gap-4 rounded-[1.75rem] border border-line bg-card-solid p-5 shadow-soft transition-colors hover:border-primary"
               >
-                <Image src={doctor.photo} alt={doctor.photoAlt} width={72} height={72} className="size-18 shrink-0 rounded-2xl object-cover object-top" />
+                <DoctorPortrait doctor={doctor} size={72} className="size-18 rounded-2xl" />
                 <span className="min-w-0">
                   <span className="block text-sm text-muted">Especialista recomendado</span>
                   <span className="block font-display font-semibold text-heading group-hover:text-primary">{doctor.name}</span>

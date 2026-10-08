@@ -1,7 +1,9 @@
+import { VISIBLE_TREATMENTS } from "@/data/visibility";
 import type { Treatment } from "@/types/medical";
 
 // PROVISIONAL: duraciones aproximadas; validar con el equipo médico.
-export const treatments: readonly Treatment[] = [
+/** Todos los tratamientos (ocultos por visibility mientras no se confirmen, D3). */
+export const allTreatments: readonly Treatment[] = [
   {
     slug: "infiltraciones-ecoguiadas",
     name: "Infiltraciones articulares ecoguiadas",
@@ -63,3 +65,6 @@ export const treatments: readonly Treatment[] = [
     provisional: true,
   },
 ];
+
+/** Tratamientos publicados (D3). */
+export const treatments: readonly Treatment[] = allTreatments.filter((treatment) => VISIBLE_TREATMENTS.has(treatment.slug));

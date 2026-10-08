@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { servicePillars } from "@/data/services";
-import { treatments } from "@/data/treatments";
+import { allServicePillars as servicePillars } from "@/data/services";
+import { allTreatments as treatments } from "@/data/treatments";
 import { getServiceDetail, serviceDetails } from "@/data/service-details";
 import { getTreatmentDetail, treatmentDetails } from "@/data/treatment-details";
 

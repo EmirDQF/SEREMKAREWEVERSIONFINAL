@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Clock } from "lucide-react";
-import { getDoctor } from "@/data/doctors";
+import { blogAuthor } from "@/lib/catalog";
 import { formatLongDate } from "@/lib/format";
 import type { BlogPost } from "@/types/medical";
 
@@ -13,7 +13,7 @@ interface BlogCardProps {
 
 /** Tarjeta de artículo: portada, categoría, fecha, lectura, título (enlace de toda la tarjeta) y autor. */
 export function BlogCard({ post, headingLevel = "h3" }: BlogCardProps) {
-  const author = getDoctor(post.authorSlug);
+  const author = blogAuthor(post);
   const Heading = headingLevel;
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-line bg-card-solid shadow-soft transition-shadow duration-300 hover:shadow-lift">

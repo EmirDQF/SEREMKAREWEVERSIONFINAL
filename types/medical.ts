@@ -189,13 +189,19 @@ export interface Doctor {
   name: string;
   title: string;
   specialty: string;
-  cmp: string;
-  rne: string;
-  yearsOfExperience: number;
+  /** null = por confirmar (no se inventa). */
+  cmp: string | null;
+  rne: string | null;
+  yearsOfExperience: number | null;
   education: readonly string[];
   focus: readonly string[];
-  photo: string;
+  /** null = sin foto real todavía: se muestra un retrato con iniciales. */
+  photo: string | null;
   photoAlt: string;
+  /** Iniciales para el retrato provisional ("DC"). */
+  initials: string;
+  /** Médico de muestra (ficticio): se oculta con visibility.sampleDoctors. */
+  sample: boolean;
   /** Molestias que atiende (filtra las tarjetas del agendador). */
   complaints: readonly ComplaintId[];
   schedule: readonly DoctorSchedule[];
@@ -228,7 +234,8 @@ export interface BlogPost {
   excerpt: string;
   category: string;
   readingMinutes: number;
-  authorSlug: string;
+  /** null = equipo editorial (los artículos no tienen autor médico confirmado). */
+  authorSlug: string | null;
   publishedAt: string;
   cover: string;
   coverAlt: string;

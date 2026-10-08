@@ -218,7 +218,8 @@ interface PhysicianInfo {
   name: string;
   path: string;
   specialty: string;
-  image: string;
+  /** null = sin foto real todavía (no se publica `image`). */
+  image: string | null;
   knowsAbout: readonly string[];
 }
 
@@ -228,7 +229,7 @@ export function physicianSchema(info: PhysicianInfo): JsonLdObject {
     "@type": "Physician",
     name: info.name,
     url: `${site.url}${info.path}`,
-    image: info.image,
+    ...(info.image ? { image: info.image } : {}),
     medicalSpecialty: "Rheumatologic",
     description: info.specialty,
     knowsAbout: info.knowsAbout,
@@ -243,8 +244,8 @@ interface ArticleInfo {
   path: string;
   image: string;
   datePublished: string;
-  authorName: string;
-  authorPath: string;
+  /** null = equipo editorial: el autor es la organización. */
+  author: { name: string; path: string } | null;
 }
 
 export function blogPostingSchema(info: ArticleInfo): JsonLdObject {
@@ -257,7 +258,9 @@ export function blogPostingSchema(info: ArticleInfo): JsonLdObject {
     image: info.image,
     datePublished: info.datePublished,
     inLanguage: "es-PE",
-    author: { "@type": "Person", name: info.authorName, url: `${site.url}${info.authorPath}` },
+    author: info.author
+      ? { "@type": "Person", name: info.author.name, url: `${site.url}${info.author.path}` }
+      : ORGANIZATION_REF,
     publisher: ORGANIZATION_REF,
   };
 }

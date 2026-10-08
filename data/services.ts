@@ -1,6 +1,8 @@
+import { VISIBLE_SERVICE_PILLARS, VISIBLE_SERVICES } from "@/data/visibility";
 import type { ServicePillar } from "@/types/medical";
 
-export const servicePillars: readonly ServicePillar[] = [
+/** Todos los pilares (incluidos los ocultos por visibility, D3). */
+export const allServicePillars: readonly ServicePillar[] = [
   {
     slug: "apoyo-diagnostico",
     name: "Apoyo diagnóstico",
@@ -68,3 +70,8 @@ export const servicePillars: readonly ServicePillar[] = [
     ],
   },
 ];
+
+/** Pilares publicados, solo con los servicios respaldados por el material real (D3). */
+export const servicePillars: readonly ServicePillar[] = allServicePillars
+  .filter((pillar) => VISIBLE_SERVICE_PILLARS.has(pillar.slug))
+  .map((pillar) => ({ ...pillar, services: pillar.services.filter((service) => VISIBLE_SERVICES.has(service.name)) }));

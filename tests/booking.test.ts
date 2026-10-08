@@ -20,7 +20,7 @@ import {
 } from "@/lib/booking";
 import { doctors } from "@/data/doctors";
 import { bodyZones, complaintFor, complaints, getComplaint } from "@/data/bodyZones";
-import { teleconsultSchedule } from "@/data/teleconsult";
+import { ENABLED_MODALITIES, teleconsultSchedule } from "@/data/teleconsult";
 import { slotStarts } from "@/lib/slots";
 import type { BookingDraft, ComplaintId, Doctor, Modality, Weekday } from "@/types/medical";
 
@@ -44,6 +44,8 @@ function makeDoctor(slug: string, days: readonly Weekday[], modalities: readonly
     complaints: ["rodilla", "general"],
     schedule: [{ days, from, to, modalities }],
     provisional: true,
+    initials: "XX",
+    sample: true,
   };
 }
 
@@ -206,9 +208,9 @@ describe("buildTeleconsultMessage", () => {
 
 describe("real roster (data/doctors.ts)", () => {
   const weekdays = teleconsultSchedule.days;
-  const modalities: readonly Modality[] = ["videollamada", "llamada"];
+  const modalities = ENABLED_MODALITIES;
 
-  it("covers every complaint, every business day and both modalities", () => {
+  it("covers every complaint, every business day and every enabled modality", () => {
     for (const complaint of complaints) {
       for (const modality of modalities) {
         for (const day of weekdays) {

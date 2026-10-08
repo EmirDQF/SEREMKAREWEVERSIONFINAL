@@ -1,12 +1,39 @@
+import { visibility } from "@/data/visibility";
 import type { Doctor } from "@/types/medical";
 
 const unsplash = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=900&q=75`;
 const HOUR = 60;
 
-// PROVISIONAL: médicos ficticios. Reemplazar por el staff real (nombre, CMP, RNE, foto y horarios).
-export const doctors: readonly Doctor[] = [
+export const REAL_DOCTOR_SLUG = "daniel-ccolcca";
+
+/**
+ * Todos los médicos. El único real es el Dr. Daniel Ccolcca (index.html de SEREMKAREWEB).
+ * Los demás son de muestra (`sample: true`) y se ocultan con visibility.sampleDoctors.
+ */
+export const allDoctors: readonly Doctor[] = [
+  {
+    slug: REAL_DOCTOR_SLUG,
+    initials: "DC",
+    name: "Dr. Daniel Ccolcca",
+    title: "Médico reumatólogo",
+    specialty: "Reumatología · Teleconsulta",
+    cmp: null, // CONFIRMAR: CMP (index.html: [CMP])
+    rne: null, // CONFIRMAR: RNE (index.html: [RNE])
+    yearsOfExperience: null, // CONFIRMAR
+    education: [], // CONFIRMAR: formación
+    // Motivos que nombra el index.html real de la teleconsulta.
+    focus: ["Dolor de rodilla", "Artritis", "Artrosis", "Lupus", "Osteoporosis"],
+    photo: null, // CONFIRMAR: foto real (la recibida muestra otro nombre bordado en la bata)
+    photoAlt: "Dr. Daniel Ccolcca, médico reumatólogo de SERMEKARE",
+    complaints: ["articulaciones", "espalda", "rodilla", "huesos", "generalizado", "general"],
+    // PROVISIONAL: franja de la agenda demo; la disponibilidad real la dará Cal.com.
+    schedule: [{ days: [1, 2, 3, 4, 5], from: 9 * HOUR, to: 22 * HOUR, modalities: ["videollamada"] }],
+    provisional: true,
+    sample: false,
+  },
   {
     slug: "valeria-quintana",
+    initials: "VQ",
     name: "Dra. Valeria Quintana Ríos",
     title: "Médica reumatóloga",
     specialty: "Reumatología · Ecografía musculoesquelética",
@@ -25,9 +52,11 @@ export const doctors: readonly Doctor[] = [
     // PROVISIONAL: lunes, miércoles y viernes de 7:00 a 10:00 p.m.
     schedule: [{ days: [1, 3, 5], from: 19 * HOUR, to: 22 * HOUR, modalities: ["videollamada", "llamada"] }],
     provisional: true,
+    sample: true,
   },
   {
     slug: "martin-salazar",
+    initials: "MS",
     name: "Dr. Martín Salazar Vega",
     title: "Médico reumatólogo",
     specialty: "Reumatología · Terapias biológicas",
@@ -46,9 +75,11 @@ export const doctors: readonly Doctor[] = [
     // PROVISIONAL: martes y jueves de 7:00 a 10:00 p.m., solo videollamada
     schedule: [{ days: [2, 4], from: 19 * HOUR, to: 22 * HOUR, modalities: ["videollamada"] }],
     provisional: true,
+    sample: true,
   },
   {
     slug: "carmen-ugarte",
+    initials: "CU",
     name: "Dra. Carmen Ugarte Llosa",
     title: "Médica reumatóloga",
     specialty: "Reumatología · Osteoporosis y lupus",
@@ -67,9 +98,11 @@ export const doctors: readonly Doctor[] = [
     // PROVISIONAL: lunes a viernes de 7:00 a 9:00 p.m.
     schedule: [{ days: [1, 2, 3, 4, 5], from: 19 * HOUR, to: 21 * HOUR, modalities: ["videollamada", "llamada"] }],
     provisional: true,
+    sample: true,
   },
   {
     slug: "diego-paredes",
+    initials: "DP",
     name: "Dr. Diego Paredes Huamán",
     title: "Médico especialista en Medicina Física y Rehabilitación",
     specialty: "Rehabilitación · Dolor crónico y lesiones deportivas",
@@ -88,8 +121,12 @@ export const doctors: readonly Doctor[] = [
     // PROVISIONAL: lunes a viernes de 8:00 a 10:00 p.m.
     schedule: [{ days: [1, 2, 3, 4, 5], from: 20 * HOUR, to: 22 * HOUR, modalities: ["videollamada", "llamada"] }],
     provisional: true,
+    sample: true,
   },
 ];
+
+/** Médicos publicados. */
+export const doctors: readonly Doctor[] = allDoctors.filter((doctor) => visibility.sampleDoctors || !doctor.sample);
 
 export function getDoctor(slug: string): Doctor {
   const doctor = doctors.find((d) => d.slug === slug);

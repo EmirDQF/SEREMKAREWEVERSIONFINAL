@@ -34,3 +34,11 @@ export function findDoctor(slug: string): Doctor | undefined {
 export function findBlogPost(slug: string): BlogPost | undefined {
   return blogPosts.find((post) => post.slug === slug);
 }
+
+export const EDITORIAL_AUTHOR = "Equipo editorial SERMEKARE";
+
+/** Autor visible de un artículo: el médico si está confirmado; si no, el equipo editorial. */
+export function blogAuthor(post: Pick<BlogPost, "authorSlug">): { name: string; path: string | null } {
+  const doctor = post.authorSlug ? findDoctor(post.authorSlug) : undefined;
+  return doctor ? { name: doctor.name, path: `/staff/${doctor.slug}` } : { name: EDITORIAL_AUTHOR, path: null };
+}

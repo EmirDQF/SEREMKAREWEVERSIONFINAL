@@ -6,7 +6,6 @@ import { SymptomTriage } from "@/components/sections/SymptomTriage";
 import { WhyUs } from "@/components/sections/WhyUs";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { TreatmentsGrid } from "@/components/sections/TreatmentsGrid";
-import { GuidedVsBlind } from "@/components/sections/GuidedVsBlind";
 import { BoneDensitySection } from "@/components/sections/BoneDensitySection";
 import { CareJourney } from "@/components/sections/CareJourney";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
@@ -18,6 +17,7 @@ import { BlogPreview } from "@/components/sections/BlogPreview";
 import { FAQ } from "@/components/sections/FAQ";
 import { LocationCTA } from "@/components/sections/LocationCTA";
 import { site } from "@/data/site";
+import { visibility } from "@/data/visibility";
 import { DEFAULT_DESCRIPTION, buildMetadata } from "@/lib/seo";
 
 const HOME_TITLE = `Reumatólogo en Lima Norte y Callao | ${site.name}`;
@@ -37,12 +37,12 @@ export default function Home() {
       <WhyUs />
       <ServicesGrid />
       <TreatmentsGrid />
-      <GuidedVsBlind />
+      {/* D3: las infiltraciones ecoguiadas no están respaldadas por el material real. */}
       <BoneDensitySection />
       <CareJourney />
       <DoctorsSection />
       <Testimonials />
-      <VideoSection />
+      {visibility.sampleVideo ? <VideoSection /> : null}
       <TelemedicineBand />
       <AppointmentForm />
       <BlogPreview />

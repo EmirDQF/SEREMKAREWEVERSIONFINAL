@@ -9,9 +9,8 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { KineticText } from "@/components/shared/KineticText";
 import { getBlogArticle } from "@/data/blog-articles";
-import { getDoctor } from "@/data/doctors";
 import { blogPosts } from "@/data/home";
-import { findBlogPost } from "@/lib/catalog";
+import { blogAuthor, findBlogPost } from "@/lib/catalog";
 import { formatLongDate } from "@/lib/format";
 import { blogPostingSchema, breadcrumbSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
@@ -38,7 +37,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
   const post = findBlogPost(slug);
   if (!post) notFound();
   const article = getBlogArticle(slug);
-  const author = getDoctor(post.authorSlug);
+  const author = blogAuthor(post);
   const path = `/blog/${slug}`;
   const crumbs = [
     { label: "Inicio", href: "/" },
@@ -56,8 +55,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
           path,
           image: post.cover,
           datePublished: post.publishedAt,
-          authorName: author.name,
-          authorPath: `/staff/${author.slug}`,
+          author: author.path ? { name: author.name, path: author.path } : null,
         })}
       />
       <JsonLd data={breadcrumbSchema(crumbs)} />
@@ -72,9 +70,13 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
           <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted">
             <span>
               Por{" "}
-              <Link href={`/staff/${author.slug}`} className="font-semibold text-heading hover:text-primary">
-                {author.name}
-              </Link>
+              {author.path ? (
+                <Link href={author.path} className="font-semibold text-heading hover:text-primary">
+                  {author.name}
+                </Link>
+              ) : (
+                <span className="font-semibold text-heading">{author.name}</span>
+              )}
             </span>
             <span aria-hidden>·</span>
             <time dateTime={post.publishedAt}>{formatLongDate(post.publishedAt)}</time>

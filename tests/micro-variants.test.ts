@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { servicePillars } from "@/data/services";
-import { specialties } from "@/data/specialties";
-import { treatments } from "@/data/treatments";
+import { allServicePillars as servicePillars } from "@/data/services";
+import { allSpecialties as specialties } from "@/data/specialties";
+import { allTreatments as treatments } from "@/data/treatments";
 import { CONDITION_VARIANTS, PILLAR_VARIANTS, TREATMENT_VARIANTS, isMicroVariant } from "@/lib/micro-variants";
 
 describe("micro 3D variants", () => {

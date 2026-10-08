@@ -1,8 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Award, GraduationCap, ShieldCheck } from "lucide-react";
 import type { Doctor } from "@/types/medical";
 import { DoctorAvailabilityDialog } from "@/components/shared/DoctorAvailabilityDialog";
+import { DoctorPortrait } from "@/components/shared/DoctorPortrait";
+import { credentialsLabel, experienceLabel } from "@/lib/doctor";
 import { cn } from "@/lib/utils";
 
 interface DoctorCardProps {
@@ -31,7 +32,7 @@ export function DoctorCardOption({ doctor, name, checked, onSelect, scheduleText
     >
       <label className="flex cursor-pointer items-start gap-4">
         <input id={id} type="radio" name={name} checked={checked} onChange={onSelect} aria-describedby={describedBy} className="sr-only" />
-        <Image src={doctor.photo} alt="" width={64} height={64} className="size-16 shrink-0 rounded-2xl object-cover object-top" />
+        <DoctorPortrait doctor={doctor} alt="" size={64} className="size-16 rounded-2xl" />
         <span className="min-w-0 flex-1">
           <span className="block font-display font-semibold text-heading">{doctor.name}</span>
           <span className="block text-sm font-medium text-primary">{doctor.specialty}</span>
@@ -50,7 +51,7 @@ export function DoctorCardOption({ doctor, name, checked, onSelect, scheduleText
       <div className="mt-3 flex flex-wrap items-center gap-2 sm:pl-20">
         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted">
           <ShieldCheck aria-hidden strokeWidth={1.75} className="size-4 text-primary" />
-          CMP {doctor.cmp} · RNE {doctor.rne}
+          {credentialsLabel(doctor)}
         </span>
         <DoctorAvailabilityDialog doctor={doctor} triggerVariant="ghost" triggerClassName="min-h-11 px-3 text-sm" />
       </div>
@@ -59,20 +60,23 @@ export function DoctorCardOption({ doctor, name, checked, onSelect, scheduleText
 }
 
 export function DoctorCard({ doctor }: DoctorCardProps) {
+  const experience = experienceLabel(doctor);
+  const education = doctor.education[1] ?? doctor.education[0];
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-line bg-card-solid shadow-soft transition-shadow duration-300 hover:shadow-lift">
       <div className="relative aspect-[4/4.4] overflow-hidden bg-bg-alt">
-        <Image
-          src={doctor.photo}
-          alt={doctor.photoAlt}
+        <DoctorPortrait
+          doctor={doctor}
           fill
           sizes="(min-width: 1280px) 300px, (min-width: 640px) 45vw, 92vw"
-          className="scale-[1.06] object-cover object-top transition-[scale,translate] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [translate:calc(var(--tilt-x,0)*-10px)_calc(var(--tilt-y,0)*-10px)] group-hover:scale-[1.1]"
+          className="scale-[1.06] transition-[scale,translate] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [translate:calc(var(--tilt-x,0)*-10px)_calc(var(--tilt-y,0)*-10px)] group-hover:scale-[1.1]"
         />
-        <span className="glass absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-heading">
-          <Award aria-hidden strokeWidth={1.75} className="size-4 text-primary" />
-          {doctor.yearsOfExperience} años de experiencia
-        </span>
+        {experience ? (
+          <span className="glass absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-heading">
+            <Award aria-hidden strokeWidth={1.75} className="size-4 text-primary" />
+            {experience}
+          </span>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
@@ -84,12 +88,14 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
         <p className="mt-1 font-medium text-primary">{doctor.specialty}</p>
         <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-bg-alt px-3 py-1 text-sm font-medium text-muted shadow-[inset_0_1px_0_rgb(255_255_255/0.9),inset_0_-1px_2px_rgb(15_23_42/0.08),0_1px_2px_rgb(15_23_42/0.06)] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),inset_0_-1px_2px_rgb(0_0_0/0.4)]">
           <ShieldCheck aria-hidden strokeWidth={1.75} className="size-4 text-primary" />
-          CMP {doctor.cmp} · RNE {doctor.rne}
+          {credentialsLabel(doctor)}
         </p>
-        <p className="mt-4 flex items-start gap-2 text-[0.95rem] text-muted">
-          <GraduationCap aria-hidden strokeWidth={1.75} className="mt-0.5 size-5 shrink-0 text-primary" />
-          {doctor.education[1] ?? doctor.education[0]}
-        </p>
+        {education ? (
+          <p className="mt-4 flex items-start gap-2 text-[0.95rem] text-muted">
+            <GraduationCap aria-hidden strokeWidth={1.75} className="mt-0.5 size-5 shrink-0 text-primary" />
+            {education}
+          </p>
+        ) : null}
         <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Enfoque clínico">
           {doctor.focus.slice(0, 3).map((item) => (
             <li key={item} className="rounded-full bg-bg-alt px-3 py-1 text-sm text-fg">

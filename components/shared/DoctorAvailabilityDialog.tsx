@@ -8,6 +8,7 @@ import { buttonVariants, type ButtonVariant } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { describeBlock } from "@/lib/booking";
 import { clinicWhatsApp, messageForDoctor } from "@/lib/whatsapp";
+import { credentialsLabel } from "@/lib/doctor";
 import { cn } from "@/lib/utils";
 
 interface DoctorAvailabilityDialogProps {
@@ -33,7 +34,7 @@ export function DoctorAvailabilityDialog({ doctor, triggerClassName, triggerVari
       <DialogContent>
         <DialogTitle>{doctor.name}</DialogTitle>
         <DialogDescription>
-          {doctor.title} · CMP {doctor.cmp} · RNE {doctor.rne}
+          {doctor.title} · {credentialsLabel(doctor)}
         </DialogDescription>
 
         <ul className="mt-6 space-y-3">

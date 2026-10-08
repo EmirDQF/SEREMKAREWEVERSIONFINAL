@@ -1,3 +1,4 @@
+import { visibility } from "@/data/visibility";
 import type { BlogPost, Insurer, PainPoint } from "@/types/medical";
 
 const unsplash = (id: string, w = 800) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=75`;
@@ -50,7 +51,7 @@ export const painPoints: readonly PainPoint[] = [
 ];
 
 // PROVISIONAL: logos genéricos. No usar marcas reales hasta firmar convenios.
-export const insurers: readonly Insurer[] = [
+const sampleInsurers: readonly Insurer[] = [
   { id: "a", label: "Aseguradora A", kind: "seguro" },
   { id: "b", label: "EPS B", kind: "eps" },
   { id: "c", label: "Seguro de salud C", kind: "seguro" },
@@ -61,6 +62,9 @@ export const insurers: readonly Insurer[] = [
   { id: "h", label: "Clínica aliada", kind: "alianza" },
 ];
 
+/** Aseguradoras publicadas: ninguna hasta firmar convenios (D2). */
+export const insurers: readonly Insurer[] = visibility.insurers ? sampleInsurers : [];
+
 // Metadatos del blog (el contenido MDX llega en el bloque 4).
 export const blogPosts: readonly BlogPost[] = [
   {
@@ -69,7 +73,7 @@ export const blogPosts: readonly BlogPost[] = [
     excerpt: "La precisión importa: te explicamos por qué ver la articulación en tiempo real mejora la experiencia y los resultados.",
     category: "Procedimientos",
     readingMinutes: 6,
-    authorSlug: "valeria-quintana",
+    authorSlug: null,
     publishedAt: "2026-09-22",
     cover: unsplash("1666214280391-8ff5bd3c0bf0"),
     coverAlt: "Dos especialistas revisando imágenes médicas en monitores",
@@ -80,7 +84,7 @@ export const blogPosts: readonly BlogPost[] = [
     excerpt: "Sentarte 8 horas pasa factura. Aprende a distinguir un dolor postural de uno que necesita evaluación.",
     category: "Dolor de espalda",
     readingMinutes: 5,
-    authorSlug: "diego-paredes",
+    authorSlug: null,
     publishedAt: "2026-09-08",
     cover: unsplash("1573496359142-b8d87734a5a2"),
     coverAlt: "Profesional sentada en su oficina",
@@ -91,7 +95,7 @@ export const blogPosts: readonly BlogPost[] = [
     excerpt: "Rodilla, tendón de Aquiles y fascia plantar: guía práctica para no convertir una molestia en lesión crónica.",
     category: "Deporte",
     readingMinutes: 7,
-    authorSlug: "diego-paredes",
+    authorSlug: null,
     publishedAt: "2026-08-25",
     cover: unsplash("1476480862126-209bfaa8edc8"),
     coverAlt: "Piernas de una persona corriendo escaleras arriba",
@@ -102,7 +106,7 @@ export const blogPosts: readonly BlogPost[] = [
     excerpt: "Ejercicios simples, pausas activas y las señales de alerta que no debes ignorar.",
     category: "Dolor de cuello",
     readingMinutes: 5,
-    authorSlug: "diego-paredes",
+    authorSlug: null,
     publishedAt: "2026-08-11",
     cover: unsplash("1576091160550-2173dba999ef"),
     coverAlt: "Manos sobre un teclado junto a un estetoscopio",
@@ -113,7 +117,7 @@ export const blogPosts: readonly BlogPost[] = [
     excerpt: "Osteoporosis, densitometría y cambios en casa que reducen el riesgo de fracturas.",
     category: "Osteoporosis",
     readingMinutes: 6,
-    authorSlug: "carmen-ugarte",
+    authorSlug: null,
     publishedAt: "2026-07-28",
     cover: unsplash("1631217868264-e5b90bb7e133"),
     coverAlt: "Doctora conversando con una paciente adulta mayor",
@@ -124,7 +128,7 @@ export const blogPosts: readonly BlogPost[] = [
     excerpt: "Mitos y verdades sobre el ácido úrico, con recomendaciones prácticas de nuestro equipo.",
     category: "Gota",
     readingMinutes: 6,
-    authorSlug: "carmen-ugarte",
+    authorSlug: null,
     publishedAt: "2026-07-14",
     cover: unsplash("1505751172876-fa1923c5c528"),
     coverAlt: "Estetoscopio sobre una superficie clara",

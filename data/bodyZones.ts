@@ -1,3 +1,4 @@
+import { REAL_DOCTOR_SLUG } from "@/data/doctors";
 import type { BodyZone, BodyZoneId, Complaint, ComplaintId, SpecialtySlug } from "@/types/medical";
 
 export const bodyZones: readonly BodyZone[] = [
@@ -8,7 +9,7 @@ export const bodyZones: readonly BodyZone[] = [
     alertSigns: ["Hormigueo o debilidad en brazos", "Dolor que despierta de noche", "Dolor tras una caída o golpe"],
     approach: "Evaluación postural, ecografía si es necesario y terapia física con pausas activas para tu jornada.",
     specialtySlug: "fibromialgia",
-    doctorSlug: "diego-paredes",
+    doctorSlug: REAL_DOCTOR_SLUG,
   },
   {
     id: "hombros",
@@ -17,7 +18,7 @@ export const bodyZones: readonly BodyZone[] = [
     alertSigns: ["No puedes levantar el brazo", "Dolor nocturno al acostarte de lado", "Pérdida de fuerza"],
     approach: "Ecografía en consultorio para ver el tendón y, si corresponde, infiltración ecoguiada más rehabilitación.",
     specialtySlug: "artrosis",
-    doctorSlug: "valeria-quintana",
+    doctorSlug: REAL_DOCTOR_SLUG,
   },
   {
     id: "manos",
@@ -26,7 +27,7 @@ export const bodyZones: readonly BodyZone[] = [
     alertSigns: ["Rigidez matinal de más de 30 minutos", "Dedos hinchados como salchicha", "Dedos que cambian de color con el frío"],
     approach: "Laboratorio inmunológico, ecografía y videocapilaroscopía para un diagnóstico temprano.",
     specialtySlug: "artritis-reumatoide",
-    doctorSlug: "martin-salazar",
+    doctorSlug: REAL_DOCTOR_SLUG,
   },
   {
     id: "espalda",
@@ -35,7 +36,7 @@ export const bodyZones: readonly BodyZone[] = [
     alertSigns: ["Dolor que mejora al moverte y empeora en reposo", "Dolor de madrugada", "Pérdida de estatura"],
     approach: "Historia clínica detallada, estudios dirigidos y plan de ejercicio terapéutico.",
     specialtySlug: "espondiloartritis",
-    doctorSlug: "martin-salazar",
+    doctorSlug: REAL_DOCTOR_SLUG,
   },
   {
     id: "cadera",
@@ -44,7 +45,7 @@ export const bodyZones: readonly BodyZone[] = [
     alertSigns: ["Cojera", "Dolor en la ingle al caminar", "Dificultad para ponerte medias o zapatos"],
     approach: "Ecografía, infiltración ecoguiada cuando está indicada y fortalecimiento muscular.",
     specialtySlug: "artrosis",
-    doctorSlug: "valeria-quintana",
+    doctorSlug: REAL_DOCTOR_SLUG,
   },
   {
     id: "rodillas",
@@ -53,7 +54,7 @@ export const bodyZones: readonly BodyZone[] = [
     alertSigns: ["Rodilla hinchada y caliente", "Se traba o falla al caminar", "Dolor al subir escaleras que no cede"],
     approach: "Ecografía en consultorio, infiltraciones o viscosuplementación ecoguiadas y rehabilitación.",
     specialtySlug: "artrosis",
-    doctorSlug: "valeria-quintana",
+    doctorSlug: REAL_DOCTOR_SLUG,
   },
   {
     id: "pies",
@@ -62,7 +63,7 @@ export const bodyZones: readonly BodyZone[] = [
     alertSigns: ["Dolor súbito con enrojecimiento", "Dolor en el talón al dar los primeros pasos", "Hinchazón de tobillos"],
     approach: "Confirmación diagnóstica, control de la crisis y plan para prevenir nuevos episodios.",
     specialtySlug: "gota",
-    doctorSlug: "carmen-ugarte",
+    doctorSlug: REAL_DOCTOR_SLUG,
   },
 ];
 

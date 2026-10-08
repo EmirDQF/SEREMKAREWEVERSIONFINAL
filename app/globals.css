@@ -326,6 +326,14 @@
   border: 1px solid var(--glass-border);
 }
 
+/* Retrato provisional del médico (sin foto real): navy → teal de marca, con brillo sutil.
+   Texto blanco sobre #0b192c/#00766a: contraste AA en ambos extremos. */
+@utility portrait-placeholder {
+  background:
+    radial-gradient(80% 60% at 30% 20%, rgb(255 255 255 / 0.18), transparent 60%),
+    linear-gradient(150deg, #0b192c 0%, #0b3a4a 55%, #00766a 100%);
+}
+
 /* Fondo navy inmersivo: halos de luz teal/azul que oscilan muy lento */
 @utility immersive-glow {
   position: absolute;

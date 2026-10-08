@@ -5,6 +5,7 @@ import { Reveal } from "@/components/shared/Reveal";
 import { treatments } from "@/data/treatments";
 
 export function TreatmentsGrid() {
+  if (treatments.length === 0) return null;
   return (
     <section aria-labelledby="tratamientos-title" className="section-y">
       <div className="container-page">

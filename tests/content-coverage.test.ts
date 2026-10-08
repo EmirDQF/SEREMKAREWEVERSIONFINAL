@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { blogPosts } from "@/data/home";
 import { doctors } from "@/data/doctors";
-import { specialties } from "@/data/specialties";
-import { treatments } from "@/data/treatments";
+import { allSpecialties as specialties } from "@/data/specialties";
+import { allTreatments as treatments } from "@/data/treatments";
 import { blogArticles, getBlogArticle } from "@/data/blog-articles";
 import { getSpecialtyDetail, specialtyDetails } from "@/data/specialty-details";
 import { allFaqGroups } from "@/data/faq-page";
@@ -43,9 +43,11 @@ describe("blog articles", () => {
     }
   });
 
-  it("are written by a doctor of the staff", () => {
+  it("are signed by a published doctor or by the editorial team (never a hidden sample doctor)", () => {
     const staff = new Set(doctors.map((d) => d.slug));
-    for (const post of blogPosts) expect(staff.has(post.authorSlug)).toBe(true);
+    for (const post of blogPosts) {
+      if (post.authorSlug !== null) expect(staff.has(post.authorSlug)).toBe(true);
+    }
   });
 });
 

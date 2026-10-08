@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight, Award, CalendarClock, GraduationCap, ShieldCheck } from "lucide-react";
 import { CtaBand } from "@/components/pages/CtaBand";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { DoctorAvailabilityDialog } from "@/components/shared/DoctorAvailabilityDialog";
+import { DoctorPortrait } from "@/components/shared/DoctorPortrait";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { KineticText } from "@/components/shared/KineticText";
 import { Reveal } from "@/components/shared/Reveal";
@@ -16,6 +16,7 @@ import { site } from "@/data/site";
 import { specialties } from "@/data/specialties";
 import { describeBlock } from "@/lib/booking";
 import { findDoctor } from "@/lib/catalog";
+import { credentialsLabel, experienceLabel, hasVerifiableCmp } from "@/lib/doctor";
 import { breadcrumbSchema, physicianSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 import { messageForDoctor } from "@/lib/whatsapp";
@@ -51,6 +52,7 @@ export default async function DoctorPage({ params }: PageProps<"/staff/[slug]">)
   ];
   const conditions = specialties.filter((specialty) => specialty.doctorSlug === slug);
   const articles = blogPosts.filter((post) => post.authorSlug === slug);
+  const experience = experienceLabel(doctor);
 
   return (
     <>
@@ -65,17 +67,18 @@ export default async function DoctorPage({ params }: PageProps<"/staff/[slug]">)
           <Reveal>
             <TiltCard className="mx-auto max-w-md rounded-[2rem]">
               <div className="relative aspect-[4/4.6] overflow-hidden rounded-[2rem] shadow-lift">
-                <Image
-                  src={doctor.photo}
-                  alt={doctor.photoAlt}
+                <DoctorPortrait
+                  doctor={doctor}
                   fill
-                  preload
+                  priority
                   sizes="(min-width: 1024px) 420px, 90vw"
-                  className="scale-[1.06] object-cover object-top [translate:calc(var(--tilt-x,0)*-10px)_calc(var(--tilt-y,0)*-10px)]"
+                  className="scale-[1.06] [translate:calc(var(--tilt-x,0)*-10px)_calc(var(--tilt-y,0)*-10px)]"
                 />
-                <span className="glass absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-heading">
-                  <Award aria-hidden strokeWidth={1.75} className="size-4 text-primary" /> {doctor.yearsOfExperience} años de experiencia
-                </span>
+                {experience ? (
+                  <span className="glass absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-heading">
+                    <Award aria-hidden strokeWidth={1.75} className="size-4 text-primary" /> {experience}
+                  </span>
+                ) : null}
               </div>
             </TiltCard>
           </Reveal>
@@ -86,30 +89,41 @@ export default async function DoctorPage({ params }: PageProps<"/staff/[slug]">)
               <KineticText text={doctor.name} priority />
             </h1>
             <p className="mt-4 text-lg text-muted">{doctor.specialty}</p>
-            <a
-              href={CMP_LOOKUP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex min-h-12 items-center gap-2 rounded-full bg-bg-alt px-4 font-medium text-muted shadow-[inset_0_1px_0_rgb(255_255_255/0.9),inset_0_-1px_2px_rgb(15_23_42/0.08)] hover:text-primary"
-            >
-              <ShieldCheck aria-hidden strokeWidth={1.75} className="size-5 text-primary" />
-              CMP {doctor.cmp} · RNE {doctor.rne}
-              <span className="text-sm">(verificar en el CMP)</span>
-              <ArrowUpRight aria-hidden className="size-4" />
-            </a>
+            {hasVerifiableCmp(doctor) ? (
+              <a
+                href={CMP_LOOKUP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex min-h-12 items-center gap-2 rounded-full bg-bg-alt px-4 font-medium text-muted shadow-[inset_0_1px_0_rgb(255_255_255/0.9),inset_0_-1px_2px_rgb(15_23_42/0.08)] hover:text-primary"
+              >
+                <ShieldCheck aria-hidden strokeWidth={1.75} className="size-5 text-primary" />
+                {credentialsLabel(doctor)}
+                <span className="text-sm">(verificar en el CMP; se abre en otra pestaña)</span>
+                <ArrowUpRight aria-hidden className="size-4" />
+              </a>
+            ) : (
+              <p className="mt-4 inline-flex min-h-12 items-center gap-2 rounded-full bg-bg-alt px-4 font-medium text-muted">
+                <ShieldCheck aria-hidden strokeWidth={1.75} className="size-5 text-primary" />
+                {credentialsLabel(doctor)}
+              </p>
+            )}
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-[1.5rem] border border-line bg-card-solid p-5 shadow-soft">
                 <h2 className="flex items-center gap-2 font-display font-semibold text-heading">
                   <GraduationCap aria-hidden strokeWidth={1.75} className="size-5 text-primary" /> Formación
                 </h2>
-                <ul className="mt-3 space-y-2 text-[0.95rem] text-fg">
-                  {doctor.education.map((item) => (
-                    <li key={item} className="flex gap-2.5">
-                      <span aria-hidden className="mt-2.5 size-1.5 shrink-0 rounded-full bg-teal" /> {item}
-                    </li>
-                  ))}
-                </ul>
+                {doctor.education.length > 0 ? (
+                  <ul className="mt-3 space-y-2 text-[0.95rem] text-fg">
+                    {doctor.education.map((item) => (
+                      <li key={item} className="flex gap-2.5">
+                        <span aria-hidden className="mt-2.5 size-1.5 shrink-0 rounded-full bg-teal" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-3 text-[0.95rem] text-muted">Formación por confirmar.</p>
+                )}
               </div>
               <div className="rounded-[1.5rem] border border-line bg-card-solid p-5 shadow-soft">
                 <h2 className="flex items-center gap-2 font-display font-semibold text-heading">

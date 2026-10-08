@@ -1,3 +1,4 @@
+import { visibility } from "@/data/visibility";
 import type { Modality, RedFlag, SinceId, TeleconsultHours } from "@/types/medical";
 
 const MINUTES_PER_HOUR = 60;
@@ -38,9 +39,15 @@ export const MODALITY_LABEL: Readonly<Record<Modality, string>> = {
 };
 
 export const MODALITY_HINT: Readonly<Record<Modality, string>> = {
-  videollamada: "Te vemos por cámara desde tu celular o PC",
+  // Texto real (index.html): «WhatsApp, Zoom o Google Meet (el que prefieras)».
+  videollamada: "Por WhatsApp, Zoom o Google Meet, desde tu celular, tablet o computadora",
   llamada: "Si tu internet es lento o prefieres solo voz",
 };
+
+/** Modalidades publicadas (D8: la llamada telefónica no figura en el material real). */
+export const ENABLED_MODALITIES: readonly Modality[] = visibility.phoneCallModality
+  ? ["videollamada", "llamada"]
+  : ["videollamada"];
 
 /** Señales de alarma: si alguna aplica, la teleconsulta no es el canal adecuado. */
 export const RED_FLAGS: readonly RedFlag[] = [

@@ -9,6 +9,8 @@ import { testimonials } from "@/data/testimonials";
 import { cn } from "@/lib/utils";
 
 export function Testimonials() {
+  // Sin reseñas reales con consentimiento no se muestra (D2).
+  if (testimonials.length === 0) return null;
   return (
     <section aria-labelledby="testimonios-title" className="section-y">
       <div className="container-page">

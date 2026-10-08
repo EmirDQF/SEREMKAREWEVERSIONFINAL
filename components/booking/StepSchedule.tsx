@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Clock, Phone, Video } from "lucide-react";
 import type { Doctor } from "@/types/medical";
 import { DoctorCardOption } from "@/components/shared/DoctorCard";
-import { MODALITY_HINT, teleconsultSchedule } from "@/data/teleconsult";
+import { ENABLED_MODALITIES, MODALITY_HINT, teleconsultSchedule } from "@/data/teleconsult";
 import { describeBlock, doctorSlots, doctorsFor, withDoctor, withModality } from "@/lib/booking";
 import { describeDays, formatTime, todayISO } from "@/lib/schedule";
 import { dayChipLabel, nextBusinessDays } from "@/lib/slots";
@@ -31,9 +31,11 @@ function ModalityToggle({ draft, onChange }: StepProps) {
   return (
     <fieldset>
       <legend className={LEGEND}>¿Cómo prefieres conectarte?</legend>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+      <div className={cn("mt-3 grid gap-3", ENABLED_MODALITIES.length > 1 && "sm:grid-cols-2")}>
         <Choice name="modality" value="videollamada" current={draft.modality} onChange={(m) => onChange(withModality(draft, m))} icon={<Video aria-hidden strokeWidth={1.75} />} title="Videollamada" hint={MODALITY_HINT.videollamada} tone="video" />
-        <Choice name="modality" value="llamada" current={draft.modality} onChange={(m) => onChange(withModality(draft, m))} icon={<Phone aria-hidden strokeWidth={1.75} />} title="Llamada telefónica" hint={MODALITY_HINT.llamada} tone="video" />
+        {ENABLED_MODALITIES.includes("llamada") ? (
+          <Choice name="modality" value="llamada" current={draft.modality} onChange={(m) => onChange(withModality(draft, m))} icon={<Phone aria-hidden strokeWidth={1.75} />} title="Llamada telefónica" hint={MODALITY_HINT.llamada} tone="video" />
+        ) : null}
       </div>
     </fieldset>
   );

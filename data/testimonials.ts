@@ -1,8 +1,9 @@
+import { visibility } from "@/data/visibility";
 import type { Testimonial } from "@/types/medical";
 
 // PROVISIONAL: testimonios de ejemplo. Antes de publicar, reemplazar por reseñas reales
 // con autorización escrita del paciente (Indecopi / Ley N.° 29733).
-export const testimonials: readonly Testimonial[] = [
+const sampleTestimonials: readonly Testimonial[] = [
   {
     id: "t1",
     name: "Rosa M.",
@@ -78,3 +79,6 @@ export const testimonials: readonly Testimonial[] = [
     provisional: true,
   },
 ];
+
+/** Testimonios publicados: ninguno hasta tener reseñas reales con consentimiento (D2). */
+export const testimonials: readonly Testimonial[] = visibility.testimonials ? sampleTestimonials : [];

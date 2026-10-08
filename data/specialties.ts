@@ -1,6 +1,9 @@
+import { REAL_DOCTOR_SLUG } from "@/data/doctors";
+import { VISIBLE_SPECIALTIES } from "@/data/visibility";
 import type { Specialty, SpecialtySlug } from "@/types/medical";
 
-export const specialties: readonly Specialty[] = [
+/** Todas las especialidades (incluidas las ocultas por visibility). */
+export const allSpecialties: readonly Specialty[] = [
   {
     slug: "artrosis",
     name: "Artrosis y desgaste cartilaginoso",
@@ -9,7 +12,7 @@ export const specialties: readonly Specialty[] = [
     symptoms: ["Dolor al subir escaleras o al caminar", "Rigidez de pocos minutos al levantarte", "Crujidos al mover la articulación"],
     alertSigns: ["Dolor que no cede con reposo", "Rodilla que se traba o falla", "Hinchazón que aparece de un día para otro"],
     approach: "Ecografía en consultorio, ejercicio guiado, infiltraciones ecoguiadas y viscosuplementación cuando están indicadas.",
-    doctorSlug: "valeria-quintana",
+    doctorSlug: REAL_DOCTOR_SLUG,
     inTriage: true,
     provisional: true,
   },
@@ -21,7 +24,7 @@ export const specialties: readonly Specialty[] = [
     symptoms: ["Manos rígidas más de 30 minutos al despertar", "Dolor e hinchazón en ambos lados del cuerpo", "Cansancio persistente"],
     alertSigns: ["Varias articulaciones inflamadas a la vez", "Dificultad para cerrar el puño", "Fiebre o baja de peso sin causa"],
     approach: "Diagnóstico temprano con laboratorio inmunológico y ecografía; control con fármacos modificadores y terapia biológica si se requiere.",
-    doctorSlug: "martin-salazar",
+    doctorSlug: REAL_DOCTOR_SLUG,
     inTriage: true,
     provisional: true,
   },
@@ -33,7 +36,7 @@ export const specialties: readonly Specialty[] = [
     symptoms: ["Dolor súbito e intenso, muchas veces de noche", "Articulación roja, caliente e hinchada", "Crisis que se repiten"],
     alertSigns: ["Fiebre con articulación caliente", "Bultos (tofos) en dedos u orejas", "Crisis cada vez más frecuentes"],
     approach: "Confirmación diagnóstica, manejo de la crisis y plan para bajar el ácido úrico con seguimiento y orientación nutricional.",
-    doctorSlug: "carmen-ugarte",
+    doctorSlug: REAL_DOCTOR_SLUG,
     inTriage: true,
     provisional: true,
   },
@@ -45,7 +48,7 @@ export const specialties: readonly Specialty[] = [
     symptoms: ["Dolor articular que cambia de lugar", "Manchas en la piel que empeoran con el sol", "Cansancio y caída de cabello"],
     alertSigns: ["Hinchazón de piernas u orina espumosa", "Fiebre persistente", "Dolor en el pecho al respirar"],
     approach: "Evaluación integral con laboratorio inmunológico y videocapilaroscopía; tratamiento personalizado y monitoreo cercano.",
-    doctorSlug: "carmen-ugarte",
+    doctorSlug: REAL_DOCTOR_SLUG,
     inTriage: true,
     provisional: true,
   },
@@ -57,7 +60,7 @@ export const specialties: readonly Specialty[] = [
     symptoms: ["Dolor en muchas zonas del cuerpo", "Cansancio aunque duermas", "Dificultad para concentrarte"],
     alertSigns: ["Dolor que te impide trabajar", "Ánimo bajo persistente", "Insomnio de varias semanas"],
     approach: "Abordaje multidisciplinario: reumatología, terapia física, psicología y nutrición, con metas claras de calidad de vida.",
-    doctorSlug: "diego-paredes",
+    doctorSlug: REAL_DOCTOR_SLUG,
     inTriage: true,
     provisional: true,
   },
@@ -69,7 +72,7 @@ export const specialties: readonly Specialty[] = [
     symptoms: ["Pérdida de estatura", "Espalda encorvada", "Fracturas con caídas leves"],
     alertSigns: ["Dolor de espalda súbito tras un esfuerzo leve", "Caídas frecuentes", "Menopausia temprana o uso prolongado de corticoides"],
     approach: "Densitometría ósea y evaluación de fractura vertebral (VFA), prevención de caídas y tratamiento para fortalecer el hueso.",
-    doctorSlug: "carmen-ugarte",
+    doctorSlug: REAL_DOCTOR_SLUG,
     inTriage: true,
     provisional: true,
   },
@@ -81,14 +84,22 @@ export const specialties: readonly Specialty[] = [
     symptoms: ["Dolor lumbar que despierta de madrugada", "Rigidez que mejora al moverte", "Dolor en talones o glúteos"],
     alertSigns: ["Ojo rojo y doloroso", "Dolor lumbar de más de 3 meses en menores de 45", "Psoriasis o colitis asociada"],
     approach: "Diagnóstico con ecografía y laboratorio, ejercicio terapéutico y terapia biológica cuando está indicada.",
-    doctorSlug: "martin-salazar",
+    doctorSlug: REAL_DOCTOR_SLUG,
     inTriage: false,
     provisional: true,
   },
 ];
 
+/** Especialidades publicadas (D11). */
+export const specialties: readonly Specialty[] = allSpecialties.filter((specialty) => VISIBLE_SPECIALTIES.has(specialty.slug));
+
+export function isSpecialtyVisible(slug: SpecialtySlug): boolean {
+  return VISIBLE_SPECIALTIES.has(slug);
+}
+
+/** Busca entre todas (también las ocultas): sirve para nombres y textos, no para enlazar. */
 export function getSpecialty(slug: SpecialtySlug): Specialty {
-  const specialty = specialties.find((s) => s.slug === slug);
+  const specialty = allSpecialties.find((s) => s.slug === slug);
   if (!specialty) throw new Error(`Specialty not found: ${slug}`);
   return specialty;
 }

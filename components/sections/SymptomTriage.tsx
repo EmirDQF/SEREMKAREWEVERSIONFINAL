@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
+import { DoctorPortrait } from "@/components/shared/DoctorPortrait";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { AlertTriangle, ArrowUpRight, PersonStanding, Stethoscope, Tags } from "lucide-react";
@@ -111,13 +111,7 @@ function ResultCard({ result }: { result: TriageResult }) {
       </div>
 
       <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-line p-4 sm:flex-row sm:items-center">
-        <Image
-          src={result.doctor.photo}
-          alt={result.doctor.photoAlt}
-          width={64}
-          height={64}
-          className="size-16 shrink-0 rounded-2xl object-cover object-top"
-        />
+        <DoctorPortrait doctor={result.doctor} size={64} className="size-16 rounded-2xl" />
         <div className="min-w-0 flex-1">
           <p className="text-sm text-muted">Especialista recomendado · {result.specialtyName}</p>
           <Link
