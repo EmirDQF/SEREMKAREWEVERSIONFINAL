@@ -4,7 +4,7 @@ import Link from "next/link";
 import { CalendarClock, Phone, Video } from "lucide-react";
 import type { Doctor } from "@/types/medical";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants, type ButtonVariant } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/shared/BrandIcons";
 import { describeBlock } from "@/lib/booking";
 import { clinicWhatsApp, messageForDoctor } from "@/lib/whatsapp";
@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 interface DoctorAvailabilityDialogProps {
   doctor: Doctor;
   triggerClassName?: string;
+  /** Variante del botón que abre el diálogo (en el agendador es secundario). */
+  triggerVariant?: ButtonVariant;
 }
 
 /** "Dra. Valeria Quintana Ríos" → "Dra. Valeria" */
@@ -21,10 +23,10 @@ function shortName(name: string): string {
   return name.split(" ").slice(0, 2).join(" ");
 }
 
-export function DoctorAvailabilityDialog({ doctor, triggerClassName }: DoctorAvailabilityDialogProps) {
+export function DoctorAvailabilityDialog({ doctor, triggerClassName, triggerVariant = "primary" }: DoctorAvailabilityDialogProps) {
   return (
     <Dialog>
-      <DialogTrigger className={cn(buttonVariants({ variant: "primary" }), triggerClassName)}>
+      <DialogTrigger className={cn(buttonVariants({ variant: triggerVariant }), triggerClassName)}>
         <CalendarClock aria-hidden strokeWidth={1.75} />
         Ver disponibilidad
         <span className="sr-only">de {doctor.name}</span>

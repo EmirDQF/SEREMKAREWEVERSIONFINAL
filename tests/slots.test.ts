@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addDaysISO,
   availableSlots,
+  dayChipLabel,
   formatSlot,
   isSlotAvailable,
   nextBusinessDays,
@@ -130,5 +131,14 @@ describe("isSlotAvailable", () => {
 describe("formatSlot", () => {
   it("reads like the WhatsApp template", () => {
     expect(formatSlot({ date: "2026-10-12", minutes: 1170 })).toBe("lunes 12 de octubre, 7:30 p.m.");
+  });
+});
+
+describe("dayChipLabel", () => {
+  it("says hoy / mañana or the weekday, plus a short date", () => {
+    expect(dayChipLabel("2026-10-05", "2026-10-05")).toEqual({ title: "Hoy", subtitle: "5 oct" });
+    expect(dayChipLabel("2026-10-06", "2026-10-05")).toEqual({ title: "Mañana", subtitle: "6 oct" });
+    expect(dayChipLabel("2026-10-12", "2026-10-09")).toEqual({ title: "Lunes", subtitle: "12 oct" });
+    expect(dayChipLabel("2026-12-01", "2026-11-28")).toEqual({ title: "Martes", subtitle: "1 dic" });
   });
 });

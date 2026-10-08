@@ -71,3 +71,14 @@ export function nextBusinessDays(hours: OpeningHours, count: number, now: Date):
 export function isSlotAvailable(hours: OpeningHours, slot: Slot, now: Date, window?: TimeWindow): boolean {
   return availableSlots(hours, slot.date, now, window).includes(slot.minutes);
 }
+
+const SHORT_MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "set", "oct", "nov", "dic"] as const;
+
+/** Etiqueta de los chips de día: { title: "Hoy" | "Mañana" | "Lunes", subtitle: "12 oct" }. */
+export function dayChipLabel(iso: string, todayIso: string): { title: string; subtitle: string } {
+  const date = parseISO(iso);
+  const weekday = WEEKDAYS[date.getUTCDay()];
+  const title =
+    iso === todayIso ? "Hoy" : iso === addDaysISO(todayIso, 1) ? "Mañana" : weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  return { title, subtitle: `${date.getUTCDate()} ${SHORT_MONTHS[date.getUTCMonth()]}` };
+}

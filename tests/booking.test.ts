@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   EMPTY_DRAFT,
+  applyPrefill,
+  withComplaint,
+  withDoctor,
+  withModality,
   buildTeleconsultMessage,
   describeBlock,
   doctorSlots,
@@ -256,5 +260,31 @@ describe("describeBlock", () => {
       modalities: "Videollamada o llamada",
     });
     expect(describeBlock({ days: [2, 4], from: 1200, to: 1320, modalities: ["videollamada"] }).modalities).toBe("Videollamada");
+  });
+});
+
+describe("draft transitions (immutable)", () => {
+  it("applyPrefill sets the complaint and a doctor only if that doctor treats it", () => {
+    const next = applyPrefill(EMPTY_DRAFT, { complaint: "rodilla", doctorSlug: "ana" }, roster);
+    expect(next).toMatchObject({ complaint: "rodilla", doctorSlug: "ana", slot: null });
+    expect(EMPTY_DRAFT.complaint).toBeNull();
+    expect(applyPrefill(EMPTY_DRAFT, { complaint: "huesos", doctorSlug: "ana" }, roster).doctorSlug).toBeNull();
+    expect(applyPrefill(valid, { complaint: "rodilla" }, roster).doctorSlug).toBe("ana");
+  });
+
+  it("withComplaint keeps the doctor only if they still fit", () => {
+    expect(withComplaint(valid, "general", roster).doctorSlug).toBe("ana");
+    expect(withComplaint(valid, "huesos", roster)).toMatchObject({ complaint: "huesos", doctorSlug: null, slot: null });
+  });
+
+  it("withModality drops a doctor who does not offer it", () => {
+    const withBea = { ...valid, doctorSlug: "bea", slot: { date: "2026-10-06", minutes: 1200 } };
+    expect(withModality(withBea, "llamada", roster)).toMatchObject({ modality: "llamada", doctorSlug: null, slot: null });
+    expect(withModality(valid, "llamada", roster)).toMatchObject({ modality: "llamada", doctorSlug: "ana" });
+  });
+
+  it("withDoctor resets the slot when switching doctors", () => {
+    expect(withDoctor(valid, "ana").slot).toEqual(valid.slot);
+    expect(withDoctor(valid, "bea")).toMatchObject({ doctorSlug: "bea", slot: null });
   });
 });

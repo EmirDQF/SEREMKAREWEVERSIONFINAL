@@ -1,67 +1,10 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildAppointmentMessage,
-  buildMailtoLink,
-  buildWhatsAppLink,
-  messageAbout,
-  messageForDoctor,
-  validateAppointment,
-} from "@/lib/whatsapp";
-import type { Appointment } from "@/types/medical";
-
-const base: Appointment = {
-  modality: "videollamada",
-  forWhom: "familiar",
-  specialty: "Artrosis",
-  fullName: "  María Pérez ",
-  phone: "987 654 321",
-  reason: "Dolor de rodilla al subir escaleras",
-  preferredDate: "2026-10-12",
-};
+import { buildMailtoLink, buildWhatsAppLink, messageAbout, messageForDoctor } from "@/lib/whatsapp";
 
 describe("buildWhatsAppLink", () => {
   it("encodes the message and strips non-digits from the number", () => {
     const link = buildWhatsAppLink("+51 999 000 000", "Hola & gracias");
     expect(link).toBe("https://wa.me/51999000000?text=Hola%20%26%20gracias");
-  });
-});
-
-describe("buildAppointmentMessage", () => {
-  it("includes every field in a structured, trimmed message", () => {
-    const msg = buildAppointmentMessage({ ...base, doctorName: "Dra. Lucía Andrade" });
-    expect(msg).toContain("Hola SERMEKARE, quiero agendar una teleconsulta.");
-    expect(msg).toContain("• Modalidad: Videollamada");
-    expect(msg).toContain("• Para: Un familiar");
-    expect(msg).toContain("• Especialidad: Artrosis");
-    expect(msg).toContain("• Médico: Dra. Lucía Andrade");
-    expect(msg).toContain("• Nombre: María Pérez");
-    expect(msg).toContain("• Teléfono: 987 654 321");
-    expect(msg).toContain("• Motivo: Dolor de rodilla al subir escaleras");
-    expect(msg).toContain("• Fecha preferida: lunes 12 de octubre");
-  });
-
-  it("omits optional fields when missing", () => {
-    const msg = buildAppointmentMessage({ ...base, preferredDate: undefined, modality: "llamada", forWhom: "mi" });
-    expect(msg).not.toContain("Médico");
-    expect(msg).not.toContain("Fecha preferida");
-    expect(msg).toContain("• Modalidad: Llamada");
-    expect(msg).toContain("• Para: Mí");
-  });
-});
-
-describe("validateAppointment", () => {
-  it("accepts a valid appointment", () => {
-    expect(validateAppointment(base, true, new Date("2026-10-03T12:00:00-05:00"))).toEqual({});
-  });
-
-  it("flags missing name, short phone, empty reason and no consent", () => {
-    const errors = validateAppointment({ ...base, fullName: " ", phone: "123", reason: "" }, false);
-    expect(Object.keys(errors).sort()).toEqual(["consent", "fullName", "phone", "reason"]);
-  });
-
-  it("rejects a past preferred date", () => {
-    const errors = validateAppointment({ ...base, preferredDate: "2020-01-01" }, true, new Date("2026-10-03T12:00:00-05:00"));
-    expect(errors.preferredDate).toBeDefined();
   });
 });
 

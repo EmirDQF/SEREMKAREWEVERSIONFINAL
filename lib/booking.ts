@@ -4,7 +4,16 @@ import { site } from "@/data/site";
 import { EMERGENCY, MODALITY_LABEL, SINCE_OPTIONS } from "@/data/teleconsult";
 import { describeDays, formatTime } from "@/lib/schedule";
 import { availableSlots, formatSlot, weekdayOfISO } from "@/lib/slots";
-import type { BookingDraft, BookingErrors, BookingStep, ComplaintId, Doctor, DoctorSchedule, Modality } from "@/types/medical";
+import type {
+  BookingDraft,
+  BookingErrors,
+  BookingPrefill,
+  BookingStep,
+  ComplaintId,
+  Doctor,
+  DoctorSchedule,
+  Modality,
+} from "@/types/medical";
 
 export const AGE_LIMITS = { min: 0, max: 120 } as const;
 export const NAME_LIMITS = { min: 2, max: 80 } as const;
@@ -150,4 +159,34 @@ export function describeBlock(block: DoctorSchedule): ScheduleText {
 
 function capitalizeFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+}
+
+/** ¿Ese doctor sirve para la molestia y la modalidad del borrador? */
+function doctorFits(draft: BookingDraft, slug: string | null, roster: Roster): boolean {
+  if (!slug || !draft.complaint) return false;
+  return doctorsFor(draft.complaint, draft.modality, roster).some((d) => d.slug === slug);
+}
+
+/** Quita el doctor (y su turno) si dejó de servir tras un cambio. */
+function keepDoctorIfFits(draft: BookingDraft, roster: Roster): BookingDraft {
+  return doctorFits(draft, draft.doctorSlug, roster) ? draft : { ...draft, doctorSlug: null, slot: null };
+}
+
+export function withComplaint(draft: BookingDraft, complaint: ComplaintId, roster: Roster = defaultDoctors): BookingDraft {
+  return keepDoctorIfFits({ ...draft, complaint }, roster);
+}
+
+export function withModality(draft: BookingDraft, modality: Modality, roster: Roster = defaultDoctors): BookingDraft {
+  return keepDoctorIfFits({ ...draft, modality }, roster);
+}
+
+export function withDoctor(draft: BookingDraft, doctorSlug: string): BookingDraft {
+  return doctorSlug === draft.doctorSlug ? draft : { ...draft, doctorSlug, slot: null };
+}
+
+/** Precarga desde el mapa corporal o el triage: molestia y, si encaja, el doctor recomendado. */
+export function applyPrefill(draft: BookingDraft, prefill: BookingPrefill, roster: Roster = defaultDoctors): BookingDraft {
+  const next = withComplaint(draft, prefill.complaint, roster);
+  if (!prefill.doctorSlug || !doctorFits(next, prefill.doctorSlug, roster)) return next;
+  return withDoctor(next, prefill.doctorSlug);
 }

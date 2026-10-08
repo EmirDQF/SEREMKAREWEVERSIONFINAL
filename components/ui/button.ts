@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "light" | "whatsapp";
+export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "light" | "whatsapp";
 type ButtonSize = "md" | "lg" | "icon";
 
 interface ButtonVariantOptions {
